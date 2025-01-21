@@ -29,7 +29,12 @@ Controller::Controller()
     };
 }
 
-double Controller::get_axis(std::string key)
+Controller::~Controller()
+{
+    //Leave empty for now 
+}
+
+double Controller::get_axis(const std::string &key)
 {
     if (this->axes.find(key) != this->axes.end())
     {
@@ -37,7 +42,7 @@ double Controller::get_axis(std::string key)
     }
 }
 
-int Controller::get_button(std::string key)
+int Controller::get_button(const std::string &key)
 {
     if (this->buttons.find(key) != this->buttons.end())
     {

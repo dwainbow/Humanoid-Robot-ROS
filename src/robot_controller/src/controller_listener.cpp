@@ -4,12 +4,11 @@
 
 int main(int argc, char** argv)
 {
-    Controller controller;
+    Controller& controller = Controller :: get_instance();
     
     //Init Ros Node
     ros::init(argc, argv, "controller_listener");
     ros::NodeHandle nh;
-
 
      // Subscribe to the /joy topic
     ros::Subscriber sub = nh.subscribe<sensor_msgs::Joy>("/joy", 10, 

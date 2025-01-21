@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
+  dynamixel_sdk
 )
 
 ## System dependencies are found with CMake's conventions
@@ -115,10 +116,23 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+
 include_directories(
-# include
+# include/
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${dynamixel_sdk_INCLUDE_DIRS}
 )
+
+
+add_executable(motor_controller src/motor_listener.cpp src/Motor.cpp)
+
+
+## Link against dependencies
+target_link_libraries(motor_controller ${catkin_LIBRARIES} ${dynamixel_sdk_LIBRARIES})
+add_dependencies(motor_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

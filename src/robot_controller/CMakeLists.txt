@@ -7,11 +7,27 @@ project(robot_controller)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+message("${CMAKE_SOURCE_DIR}/msg/controller_state.msg")
 find_package(catkin REQUIRED COMPONENTS
   joy
   roscpp
   sensor_msgs
   std_msgs
+  message_generation
+)
+
+add_message_files(
+    FILES
+    controller_state.msg
+    Button_data.msg
+    Axis_data.msg
+)
+
+
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,7 +122,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_controller
-#  CATKIN_DEPENDS joy roscpp sensor_msgs std_msgs
+ CATKIN_DEPENDS joy roscpp sensor_msgs std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -123,11 +139,11 @@ include_directories(
 )
 
 
-add_executable(controller_listener src/controller_listener.cpp src/Controller.cpp)
+add_executable(controller_node src/controller_node.cpp src/Controller.cpp)
 
 
 ## Link against dependencies
-target_link_libraries(controller_listener ${catkin_LIBRARIES})
-add_dependencies(controller_listener ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(controller_node ${catkin_LIBRARIES})
+add_dependencies(controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 

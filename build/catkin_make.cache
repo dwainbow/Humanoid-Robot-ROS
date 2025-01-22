@@ -1,2 +1,0 @@
-robot_controller
--DCATKIN_DEVEL_PREFIX=/home/ekow/Humanoid-Robot-ROS/devel -DCMAKE_INSTALL_PREFIX=/home/ekow/Humanoid-Robot-ROS/install -G Unix Makefiles

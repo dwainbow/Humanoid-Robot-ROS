@@ -7,7 +7,6 @@ project(robot_controller)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-message("${CMAKE_SOURCE_DIR}/msg/controller_state.msg")
 find_package(catkin REQUIRED COMPONENTS
   joy
   roscpp
@@ -22,8 +21,6 @@ add_message_files(
     Button_data.msg
     Axis_data.msg
 )
-
-
 
 generate_messages(
     DEPENDENCIES

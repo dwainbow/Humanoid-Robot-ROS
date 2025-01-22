@@ -80,7 +80,7 @@ void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
 
 void Controller::init_controller(ros::NodeHandle &nh)
 {
-    pub = nh.advertise<robot_controller::controller_state>("/controller_metadata", 10);
+    pub = nh.advertise<robot_controller::controller_state>("/controller_metadata", 1);
     sub = nh.subscribe<sensor_msgs::Joy>("/joy", 10, [this](const sensor_msgs::Joy::ConstPtr& msg) { //this is a lambda function to subsribe to the joy topic
     this->update(msg);
     });

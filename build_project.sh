@@ -15,5 +15,5 @@ fi
 catkin_make 
 
 echo "Sourcing the workspace..."
-source "$PROJECT_PATH/devel/setup.bash"
+source $PROJECT_PATH/devel/setup.bash
 echo "Finished sourcing the workspace"

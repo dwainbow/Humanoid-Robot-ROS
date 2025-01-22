@@ -2,14 +2,13 @@
 #define MOTOR_CONTROLLER_H
 
 #include <ros/ros.h>
-#include <std_msgs/Int32.h>
-#include "dynamixel_sdk/dynamixel_sdk.h"
+#include <dynamixel_sdk/dynamixel_sdk.h>
 #include <string> 
-#include "robot_controller/controller_state.h"
+#include <sensor_msgs/JointState.h>
 
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, std:: string &body_part, std::string &controller_key);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id, std::string cluster);
 
     int get_present_velocity();
     int get_present_position();
@@ -32,28 +31,23 @@ public:
 
 
 private:
-    void update_motor(const robot_controller::controller_state msg);
-
     int motor_id;
     int goal_position;
     int present_position;
     int present_velocity;
     int goal_velocity; 
     int operating_mode;
-    bool torque_enabled; 
+    bool torque; 
 
     std::string body_part ;
     std::string controller_key;
 
-    ros::Subscriber subscriber;
     ros::Publisher publisher;
 
     // Dynamixel SDK members
     dynamixel::PortHandler* port_handler;
     dynamixel::PacketHandler* packet_handler;
 
-    void initialize_motor();
-    void set_motor_position(int position);
+    void update_motor(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 };
-
 #endif // MOTOR_CONTROLLER_H

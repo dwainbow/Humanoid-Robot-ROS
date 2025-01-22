@@ -2,27 +2,22 @@
 #include "Motor.h"
 
 
-void Motor_Controller::update_motors(const std_msgs::Int32::ConstPtr &msg)
-{
-}
-
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, std::string &body_part, std::string &controller_key)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, std::string cluster)
 {
     this->motor_id = motor_id;
-    this->body_part = body_part;
-    this->controller_key = controller_key;
 
     goal_position = 0;
     present_position = 0;
     present_velocity = 0;
     goal_velocity = 0;
     operating_mode = 0;
-    torque_enabled = false;
+    torque = false;
 
-    port_handler = PortHandler::getPortHandler("/dev/ttyUSB0"); //change to rfcomm0 for bluetooth connetcion 
-    packet_handler = PacketHandler::getPacketHandler(2.0); //Protocol Version 2.0
+    port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0"); //change to rfcomm0 for bluetooth connetcion 
+    packet_handler = dynamixel::PacketHandler::getPacketHandler(2.0); //Protocol Version 2.0
 
-    motor_subscriber = nh.subscribe(topic, 10, &Motor_Controller::update_motors, this);
+    publisher = nh.advertise<sensor_msgs::JointState>("/motor"+ std::to_string(motor_id), 10);
+   
 }
 
 int Motor_Controller::get_present_velocity()
@@ -47,7 +42,7 @@ int Motor_Controller::get_goal_velocity()
 
 bool Motor_Controller::torque_enabled()
 {
-    return torque_enabled;
+    return torque;
 }
 
 int Motor_Controller::get_operating_mode()
@@ -67,7 +62,7 @@ void Motor_Controller::set_goal_velocity(int velocity)
 
 void Motor_Controller::set_torque(bool torque)
 {
-    torque_enabled = torque;
+    this->torque = torque;
 }
 
 void Motor_Controller::set_operating_mode(int mode)
@@ -87,22 +82,34 @@ void Motor_Controller::scale_position(float scaling_factor)
 
 void Motor_Controller::write_torque()
 {
-    int dxl_error = 0;
-    packet_handler->write1ByteTxRx(port_handler, motor_id, 64, torque_enabled ? 1 : 0, &dxl_error);
+    uint8_t dxl_error = 0;
+    packet_handler->write1ByteTxRx(port_handler, motor_id, 64, torque ? 1 : 0, &dxl_error);
 }
 
 void Motor_Controller::write_goal_position()
 {
-    int dxl_error = 0;
+    uint8_t dxl_error = 0;
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
+    present_position = goal_position;
 }
 
 void Motor_Controller::write_goal_velocity()
 {
-    int dxl_error = 0;
-    packet_handler_->write4ByteTxRx(port_handler_, motor_id, 104, goal_velocity, &dxl_error);
+    uint8_t dxl_error = 0;
+    packet_handler->write4ByteTxRx(port_handler, motor_id, 104, goal_velocity, &dxl_error);
+    present_velocity = goal_velocity;
 }
 
-void Motor_Controller::update_motor(const robot_controller::controller_state msg)
-{
+
+void Motor_Controller::update_motor(float position_scaling_factor, float velocity_scaling_factor) {
+
+        this->scale_position(position_scaling_factor);
+        this->scale_velocity(velocity_scaling_factor);
+
+        this->write_torque();
+        this->write_goal_position();
+        this->write_goal_velocity();
+
+        ROS_INFO("Motor %d updated with scaled values: Position = %d, Velocity = %d",
+                 motor_id, present_position, present_velocity);
 }

@@ -209,13 +209,14 @@ include_directories(
 # include/
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  
 )
 
 
-add_executable(motor_node_test src/motor_node_test.cpp src/Motor.cpp)
+add_executable(motor_node src/motor_node_test.cpp src/Motor.cpp)
 
 
 ## Link against dependencies
-target_link_libraries(motor_node_test ${catkin_LIBRARIES})
-add_dependencies(motor_node_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(motor_node ${catkin_LIBRARIES})
+add_dependencies(motor_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

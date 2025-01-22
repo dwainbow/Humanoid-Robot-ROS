@@ -1,4 +1,0 @@
-<launch>
-  <!-- Launch the motor listener -->
-  <node name="motor_listener" pkg="motor_controller" type="motor_listener" output="screen" />
-</launch>

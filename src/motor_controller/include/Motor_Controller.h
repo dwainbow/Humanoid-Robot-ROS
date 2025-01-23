@@ -30,6 +30,7 @@ public:
     void write_torque();
     void write_goal_position();
     void write_goal_velocity();
+    void publish_motor_data(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 
 
 private:
@@ -49,6 +50,5 @@ private:
     dynamixel::PortHandler* port_handler;
     dynamixel::PacketHandler* packet_handler;
 
-    void publish_motor_data(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 };
 #endif // MOTOR_CONTROLLER_H

@@ -12,7 +12,8 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
 
 void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, float velocity_scaling_factor)
 {
-
+    auto motor = motors[motor_id];
+    motor.publish_motor_data(position_scaling_factor,velocity_scaling_factor);
 }
 
 void Motor_Cluster::add_motor(Motor_Controller motor)
@@ -24,50 +25,52 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
 {
 
     //TODO: Maybe add filtering to make message reading for clusters more efficient
+    // ROS_INFO("READING VALUES LEFT ARM");
     switch (body_part){
         case Body_Part::LEFT_ARM: 
             for (const auto& axis : msg.axes) {
-                auto key = axis.key.c_str();
+                std::string key = axis.key.c_str();
+                
                 if (key == "L2"){
                     auto value = axis.value;
                     controller_keys[key] = value;
-                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
         case Body_Part::RIGHT_ARM: 
             for (const auto& axis : msg.axes) {
+                std::string key = axis.key.c_str();
 
-                auto key = axis.key.c_str();
                 if (key == "R2"){
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
         case Body_Part::LEFT_LEG: 
             for (const auto& axis : msg.axes) {
-                    auto key = axis.key.c_str();
+                std::string key = axis.key.c_str();
 
                 if (key == "Left_Stick_X" || key == "Left_Stick_Y"){
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
         case Body_Part::RIGHT_LEG: 
             for (const auto& axis : msg.axes) {
-                    auto key = axis.key.c_str();
+                    std::string key = axis.key.c_str();
 
                 if (key == "Right_Stick_X" || key == "Right_Stick_Y"){
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;

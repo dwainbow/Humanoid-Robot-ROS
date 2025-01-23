@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include "Motor.h"
+#include "Motor_Controller.h"
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "motor_node");

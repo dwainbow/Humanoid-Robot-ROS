@@ -1,6 +1,4 @@
-
-#include "Motor.h"
-
+#include "Motor_Controller.h"
 
 Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, std::string cluster)
 {
@@ -18,6 +16,11 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, std::strin
 
     publisher = nh.advertise<sensor_msgs::JointState>("/motor"+ std::to_string(motor_id), 10);
    
+}
+
+int Motor_Controller::get_id()
+{
+    return motor_id;
 }
 
 int Motor_Controller::get_present_velocity()
@@ -101,7 +104,7 @@ void Motor_Controller::write_goal_velocity()
 }
 
 
-void Motor_Controller::update_motor(float position_scaling_factor, float velocity_scaling_factor) {
+void Motor_Controller::publish_motor_data(float position_scaling_factor, float velocity_scaling_factor) {
 
         this->scale_position(position_scaling_factor);
         this->scale_velocity(velocity_scaling_factor);

@@ -9,13 +9,15 @@
 class Motor_Controller {
 public:
     Motor_Controller(ros::NodeHandle& nh,int motor_id, std::string cluster);
+    Motor_Controller() = default;
 
+    int get_id();
     int get_present_velocity();
     int get_present_position();
     int get_goal_position();
     int get_goal_velocity();
-    bool torque_enabled();
     int get_operating_mode();
+    bool torque_enabled();
 
     void set_goal_position(int position);
     void set_goal_velocity(int velocity);
@@ -48,6 +50,6 @@ private:
     dynamixel::PortHandler* port_handler;
     dynamixel::PacketHandler* packet_handler;
 
-    void update_motor(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
+    void publish_motor_data(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 };
 #endif // MOTOR_CONTROLLER_H

@@ -31,7 +31,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
                 if (key == "L2"){
                     auto value = axis.value;
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
@@ -43,7 +43,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
@@ -55,7 +55,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;
@@ -67,7 +67,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
                 }
             }
             break ;

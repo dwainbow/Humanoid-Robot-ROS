@@ -8,7 +8,7 @@
 
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, std::string cluster);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id);
     Motor_Controller() = default;
 
     int get_id();
@@ -41,7 +41,6 @@ private:
     int operating_mode;
     bool torque; 
 
-    std::string body_part ;
     std::string controller_key;
 
     ros::Publisher publisher;

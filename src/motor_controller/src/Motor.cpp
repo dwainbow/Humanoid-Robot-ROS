@@ -1,6 +1,6 @@
 #include "Motor_Controller.h"
 
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, std::string cluster)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id)
 {
     this->motor_id = motor_id;
 

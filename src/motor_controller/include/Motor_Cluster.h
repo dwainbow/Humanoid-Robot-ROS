@@ -25,10 +25,7 @@ class Motor_Cluster {
         std::map<int, Motor_Controller> motors;
         std::map<std::string, float> controller_keys;
 
-        void read_controller_data(const robot_controller::controller_state &msg);
-
-
-        
+        void read_controller_data(const robot_controller::controller_state &msg);        
 };
 #endif // MOTOR_CONTROLLER_H
 

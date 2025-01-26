@@ -3,13 +3,13 @@
 #include "Motor_Controller.h"
 #include <dynamixel_sdk/dynamixel_sdk.h>
 
-void scan_nodes(){
+void scan_motors(){
     const char* port_name = "/dev/ttyUSB0"; // Replace with your actual port
-    int baud_rates[] = {9600, 57600, 115200, 1000000, 2000000, 3000000, 4500000};
+    int baud_rates[] = {57600};
     const int num_baud_rates = sizeof(baud_rates) / sizeof(baud_rates[0]);
 
     // Protocol versions to test
-    float protocol_versions[] = {1.0, 2.0};
+    float protocol_versions[] = {2.0};
     const int num_protocols = sizeof(protocol_versions) / sizeof(protocol_versions[0]);
 
     // Create port handler
@@ -45,6 +45,7 @@ void scan_nodes(){
                 if (dxl_comm_result == COMM_SUCCESS) {
                     ROS_INFO("Motor found! ID: %d, Model Number: %d, Protocol: %.1f, Baud Rate: %d",
                              id, model_number, protocol_version, baud_rates[i]);
+                    break;
                 } else if (dxl_comm_result != COMM_TX_FAIL) {
                     ROS_WARN("Error with ID %d: %s", id, packetHandler->getTxRxResult(dxl_comm_result));
                 }
@@ -60,25 +61,27 @@ Motor_Cluster build_left_arm_cluster(ros::NodeHandle nh){
 
     Motor_Controller motor_1 = Motor_Controller(nh, 1);
     motor_1.set_torque(true);
-    motor_1.set_operating_mode(3);
-    motor_1.set_goal_position(2048);
-    motor_1.set_goal_velocity(50);
+    // motor_1.set_operating_mode(3);
+    // motor_1.set_goal_position(20000);
+    // motor_1.publish_motor_data();
+    // motor_1.reset_motor();
+    // motor_1.set_goal_velocity(50);
 
-    Motor_Controller motor_2 = Motor_Controller(nh, 2);
-    motor_2.set_torque(true);
-    motor_2.set_operating_mode(3);
-    motor_2.set_goal_position(2048);
-    motor_2.set_goal_velocity(50);
+    // Motor_Controller motor_2 = Motor_Controller(nh, 2);
+    // motor_2.set_torque(true);
+    // motor_2.set_operating_mode(3);
+    // motor_2.set_goal_position(2048);
+    // motor_2.set_goal_velocity(50);
 
-    Motor_Controller motor_3 = Motor_Controller(nh, 3);
-    motor_3.set_torque(true);
-    motor_3.set_operating_mode(3);
-    motor_3.set_goal_position(2048);
-    motor_3.set_goal_velocity(50);
+    // Motor_Controller motor_3 = Motor_Controller(nh, 3);
+    // motor_3.set_torque(true);
+    // motor_3.set_operating_mode(3);
+    // motor_3.set_goal_position(2048);
+    // motor_3.set_goal_velocity(50);
 
     left_arm_cluster.add_motor(motor_1);
-    left_arm_cluster.add_motor(motor_2);
-    left_arm_cluster.add_motor(motor_3);
+    // left_arm_cluster.add_motor(motor_2);
+    // left_arm_cluster.add_motor(motor_3);
 
     return left_arm_cluster;
 }
@@ -172,15 +175,19 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "motor_node");
     ros::NodeHandle nh;
-    // ROS_INFO("Scanning nodes");
-    // scan_nodes();
+    // ROS_INFO("Scanning motors");
+    // scan_motors();
     // ROS_INFO("Finished Scanning nodes");
 
-    Motor_Cluster left_arm_cluster = build_left_arm_cluster(nh);
-    Motor_Cluster right_arm_cluster = build_right_arm_cluster(nh);
-    Motor_Cluster left_leg_cluster = build_left_leg_cluster(nh);
-    Motor_Cluster right_leg_cluster = build_right_leg_cluster(nh);
+    // Motor_Cluster right_arm_cluster = build_right_arm_cluster(nh);
+    // Motor_Cluster left_leg_cluster = build_left_leg_cluster(nh);
+    // Motor_Cluster right_leg_cluster = build_right_leg_cluster(nh);
    
-    ros::spin();
+    Motor_Cluster left_arm_cluster = build_left_arm_cluster(nh);
+    while(ros::ok()){
+        left_arm_cluster.update_motor(1);
+        ros::spinOnce();
+    }
+    // ros::spin();
     return 0;
 }

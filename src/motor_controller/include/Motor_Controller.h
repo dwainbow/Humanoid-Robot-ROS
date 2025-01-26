@@ -19,6 +19,8 @@ public:
     int get_operating_mode();
     bool torque_enabled();
 
+    void connect_motor();
+
     void set_goal_position(int position);
     void set_goal_velocity(int velocity);
     void set_torque(bool torque);
@@ -32,6 +34,9 @@ public:
     void write_goal_velocity();
     void publish_motor_data(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 
+    void reset_motor();
+
+
 
 private:
     int motor_id;
@@ -40,6 +45,8 @@ private:
     int present_velocity;
     int goal_velocity; 
     int operating_mode;
+    int baude_rate;
+    float protocol_version;
     bool torque; 
 
     std::string controller_key;

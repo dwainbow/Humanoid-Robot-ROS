@@ -12,8 +12,40 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
 
 void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, float velocity_scaling_factor)
 {
+    //TODO This needs to be modified
     auto motor = motors[motor_id];
-    motor.publish_motor_data(position_scaling_factor,velocity_scaling_factor);
+    float value;
+
+    switch(body_part){
+    case Body_Part::LEFT_ARM: 
+        value = controller_keys["L2"];
+        break ;
+    
+    case Body_Part::RIGHT_ARM:
+
+        value = controller_keys["R2"];
+        break ;
+    
+    case Body_Part::LEFT_LEG:
+        value = controller_keys["Left_Stick_X"];
+        value = controller_keys["Left_Stick_Y"];
+        break ;
+    
+    case Body_Part::RIGHT_LEG:
+        value = controller_keys["Right_Stick_X"];
+        value = controller_keys["Right_Stick_Y"];
+        break ;
+    }
+
+    if (value == 1.0){
+        return;
+    }
+    int new_position_value = motor.get_present_position() + 10000*value;
+    motor.set_goal_position(new_position_value);
+
+    ROS_INFO("Motor %d present position: %d", motor_id, motor.get_present_position());
+    
+    motor.publish_motor_data(position_scaling_factor*value,velocity_scaling_factor*value);
 }
 
 void Motor_Cluster::add_motor(Motor_Controller motor)
@@ -23,20 +55,19 @@ void Motor_Cluster::add_motor(Motor_Controller motor)
 
 void Motor_Cluster::read_controller_data(const robot_controller::controller_state &msg)
 {
-
-    //TODO: Maybe add filtering to make message reading for clusters more efficient
-    // ROS_INFO("READING VALUES LEFT ARM");
     switch (body_part){
         case Body_Part::LEFT_ARM: 
             for (const auto& axis : msg.axes) {
                 std::string key = axis.key.c_str();
-                
+               
                 if (key == "L2"){
                     auto value = axis.value;
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    // ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    break ;
                 }
             }
+            
             break ;
         case Body_Part::RIGHT_ARM: 
             for (const auto& axis : msg.axes) {
@@ -47,6 +78,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
 
                     controller_keys[key] = value;
                     //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    break ;
                 }
             }
             break ;
@@ -58,7 +90,8 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
                     auto value = axis.value;
 
                     controller_keys[key] = value;
-                    //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    // ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    break ;
                 }
             }
             break ;
@@ -71,6 +104,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
 
                     controller_keys[key] = value;
                     //ROS_INFO("Axis key: %s, value: %f", axis.key.c_str(), axis.value);
+                    break ;
                 }
             }
             break ;

@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     Controller& controller = Controller::get_instance();
     controller.init_controller(nh);
     
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(10);
     while (ros::ok()) {
         // Call the publish_data method to publish messages
         controller.publish_data();

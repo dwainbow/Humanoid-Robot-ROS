@@ -12,7 +12,7 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
 
 void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, float velocity_scaling_factor)
 {
-    //TODO This needs to be modified
+    //TODO This needs to be modified, the current methodoloy is not great for controlling the motor 
     auto motor = motors[motor_id];
     float value;
 
@@ -40,12 +40,12 @@ void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, fl
     if (value == 1.0){
         return;
     }
-    int new_position_value = motor.get_present_position() + 10000*value;
+    int new_position_value = motor.get_present_position() + 100*value;
     motor.set_goal_position(new_position_value);
 
     ROS_INFO("Motor %d present position: %d", motor_id, motor.get_present_position());
     
-    motor.publish_motor_data(position_scaling_factor*value,velocity_scaling_factor*value);
+    motor.publish_motor_data(position_scaling_factor,velocity_scaling_factor);
 }
 
 void Motor_Cluster::add_motor(Motor_Controller motor)

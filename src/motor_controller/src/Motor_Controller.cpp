@@ -8,13 +8,12 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id)
     present_velocity = 0;
     goal_velocity = 0;
     operating_mode = 0;
-    torque = false;
+    torque = true ;
     baude_rate = 57600;
     protocol_version = 2.0;
 
     port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0"); //change to rfcomm0 for bluetooth connetcion 
     packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); //Protocol Version 2.0
-    publisher = nh.advertise<sensor_msgs::JointState>("/motor"+ std::to_string(motor_id), 10);
 
     this->connect_motor();
     this->reset_motor();
@@ -64,7 +63,7 @@ int Motor_Controller::get_present_velocity()
 
     int dxl_comm_result = packet_handler->read4ByteTxRx(port_handler, motor_id, 128, (uint32_t*)&velocity, &dxl_error);
 
-    ROS_INFO("Motor %d present velocity: %d", motor_id, velocity);
+    // ROS_INFO("Motor %d present velocity: %d", motor_id, velocity);
     present_velocity = velocity;  
     return present_position;
 }
@@ -76,7 +75,7 @@ int Motor_Controller::get_present_position()
 
     int dxl_comm_result = packet_handler->read4ByteTxRx(port_handler, motor_id, 132, (uint32_t*)&position, &dxl_error);
 
-    ROS_INFO("Motor %d present position: %d", motor_id, position);
+    // ROS_INFO("Motor %d present position: %d", motor_id, position);
     present_position = position;  
     return present_position;
 }
@@ -105,8 +104,6 @@ int Motor_Controller::get_operating_mode()
 void Motor_Controller::set_goal_position(int position)
 {
     ROS_INFO("Setting goal position for motor %d to %d", motor_id, position);
-    this->get_present_position();
-    ROS_INFO("Current Position %d to Next Position %d", present_position, position);
     goal_position = position;
 }
 
@@ -147,21 +144,21 @@ void Motor_Controller::write_goal_position()
 {
     uint8_t dxl_error = 0;
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
-    present_position = goal_position;
+    // present_position = goal_position;
 }
 
 void Motor_Controller::write_goal_velocity()
 {
     uint8_t dxl_error = 0;
     packet_handler->write4ByteTxRx(port_handler, motor_id, 104, goal_velocity, &dxl_error);
-    present_velocity = goal_velocity;
+    // present_velocity = goal_velocity;
 }
 
 
 void Motor_Controller::publish_motor_data(float position_scaling_factor, float velocity_scaling_factor) {
 
-        this->scale_position(position_scaling_factor);
-        this->scale_velocity(velocity_scaling_factor);
+        // this->scale_position(position_scaling_factor);
+        // this->scale_velocity(velocity_scaling_factor);
 
         this->write_torque();
         this->write_goal_position();

@@ -36,8 +36,6 @@ public:
 
     void reset_motor();
 
-
-
 private:
     int motor_id;
     int goal_position;
@@ -51,9 +49,6 @@ private:
 
     std::string controller_key;
 
-    ros::Publisher publisher;
-
-    // Dynamixel SDK members
     dynamixel::PortHandler* port_handler;
     dynamixel::PacketHandler* packet_handler;
 

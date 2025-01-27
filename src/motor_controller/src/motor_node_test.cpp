@@ -65,7 +65,7 @@ Motor_Cluster build_left_arm_cluster(ros::NodeHandle nh){
     // motor_1.set_goal_position(20000);
     // motor_1.publish_motor_data();
     // motor_1.reset_motor();
-    // motor_1.set_goal_velocity(50);
+    motor_1.set_goal_velocity(1);
 
     // Motor_Controller motor_2 = Motor_Controller(nh, 2);
     // motor_2.set_torque(true);

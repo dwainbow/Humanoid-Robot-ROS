@@ -124,16 +124,6 @@ void Motor_Controller::set_operating_mode(int mode)
     operating_mode = mode;
 }
 
-void Motor_Controller::scale_velocity(float scaling_factor)
-{
-    goal_velocity*= scaling_factor;
-}
-
-void Motor_Controller::scale_position(float scaling_factor)
-{
-    goal_position*= scaling_factor; 
-}
-
 void Motor_Controller::write_torque()
 {
     uint8_t dxl_error = 0;
@@ -155,10 +145,7 @@ void Motor_Controller::write_goal_velocity()
 }
 
 
-void Motor_Controller::publish_motor_data(float position_scaling_factor, float velocity_scaling_factor) {
-
-        // this->scale_position(position_scaling_factor);
-        // this->scale_velocity(velocity_scaling_factor);
+void Motor_Controller::publish_motor_data() {
 
         this->write_torque();
         this->write_goal_position();

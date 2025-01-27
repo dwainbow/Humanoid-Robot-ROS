@@ -26,13 +26,10 @@ public:
     void set_torque(bool torque);
     void set_operating_mode(int mode);
 
-    void scale_velocity(float scaling_factor);
-    void scale_position(float scaling_factor);
-
     void write_torque();
     void write_goal_position();
     void write_goal_velocity();
-    void publish_motor_data(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
+    void publish_motor_data();
 
     void reset_motor();
 

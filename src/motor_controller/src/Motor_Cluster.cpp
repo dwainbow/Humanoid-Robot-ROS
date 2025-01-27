@@ -10,7 +10,7 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
     });
 }
 
-void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, float velocity_scaling_factor)
+void Motor_Cluster::update_motor(int motor_id)
 {
     //TODO This needs to be modified, the current methodoloy is not great for controlling the motor 
     auto motor = motors[motor_id];
@@ -45,7 +45,7 @@ void Motor_Cluster::update_motor(int motor_id, float position_scaling_factor, fl
 
     ROS_INFO("Motor %d present position: %d", motor_id, motor.get_present_position());
     
-    motor.publish_motor_data(position_scaling_factor,velocity_scaling_factor);
+    motor.publish_motor_data();
 }
 
 void Motor_Cluster::add_motor(Motor_Controller motor)

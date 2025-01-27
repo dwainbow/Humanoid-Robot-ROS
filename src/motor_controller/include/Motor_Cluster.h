@@ -17,7 +17,7 @@ enum class Body_Part {
 class Motor_Cluster {
     public:
         Motor_Cluster(ros::NodeHandle& nh, Body_Part body_part);
-        void update_motor(int motor_id, float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
+        void update_motor(int motor_id);
         void add_motor(Motor_Controller motor);
     private:
         ros::Subscriber subscriber; 

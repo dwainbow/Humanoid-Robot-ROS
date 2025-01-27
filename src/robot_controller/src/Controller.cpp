@@ -32,6 +32,37 @@ Controller::~Controller()
     //Leave empty for now 
 }
 
+float Controller::apply_low_pass_filter(float alpha, float prev_output, float new_input)
+{   
+
+    //alpha must be beween 0 and 1
+    //adjust this to smooth out fluctuations/noise generated from controller to reduce jerky movements 
+    //lower values = smoother response, higher values = faster  response
+    return alpha * new_input + (1 - alpha) * prev_output;
+}
+
+float Controller::normalize_input(float raw_value, float min_raw, float max_raw)
+{   
+    //This normalizes the inputs to [-1,1] for all inputs 
+    return (raw_value - min_raw) / (max_raw - min_raw) * 2.0 - 1.0;
+}
+
+float Controller::map_to_motor(float normalized_value,float max_motor)
+{   
+    //Each controller key has a different range of values, this function maps the normalized values to the motor range
+    return normalized_value * max_motor;
+}
+
+float Controller::apply_deadzone(float input, float deadzone_threshold)
+{
+    if (std:: abs(input) < deadzone_threshold)
+    {
+        return 0.0;
+    }
+    return input;
+}
+
+
 double Controller::get_axis(const std::string &key)
 {
     if (this->axes.find(key) != this->axes.end())
@@ -50,16 +81,29 @@ int Controller::get_button(const std::string &key)
     return -1;
 }
 
-void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
+float Controller::process_input(float input, float min_raw, float max_raw, float alpha, float prev_output, float deadzone_threshold, float max_motor)
 {
-    axes["Left_Stick_X"] = msg->axes[0];
-    axes["Left_Stick_Y"] = msg->axes[1];
-    axes["L2"] = msg->axes[2];
-    axes["Right_Stick_X"] = msg->axes[3];
-    axes["Right_Stick_Y"] = msg->axes[4];
-    axes["R2"] = msg->axes[5];
-    axes["DPad_X"] = msg->axes[6];
-    axes["DPad_Y"] = msg->axes[7];
+    float normalized_input = normalize_input(input, min_raw, max_raw);
+    float filtered_input = apply_low_pass_filter(alpha, prev_output, normalized_input);
+    float deadzoned_input = apply_deadzone(filtered_input, deadzone_threshold);
+    float motor_input = map_to_motor(deadzoned_input, max_motor);
+    return motor_input;
+}
+
+void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
+{   
+
+    const float alpha = 0.1;
+    const float deadzone_threshold = 0.2;
+    
+    axes["Left_Stick_X"] = process_input(msg->axes[0], -1.0, 1.0, alpha, axes["Left_Stick_X"], deadzone_threshold, 1.0); //max_motor is dependent on the motor range
+    axes["Left_Stick_Y"] = process_input(msg->axes[1], -1.0, 1.0, alpha, axes["Left_Stick_Y"], deadzone_threshold, 1.0);
+    axes["L2"] = process_input(msg->axes[2], -1.0, 1.0, alpha, axes["L2"], deadzone_threshold, 1.0);
+    axes["Right_Stick_X"] = process_input(msg->axes[3], -1.0, 1.0, alpha, axes["Right_Stick_X"], deadzone_threshold, 1.0);
+    axes["Right_Stick_Y"] = process_input(msg->axes[4], -1.0, 1.0, alpha, axes["Right_Stick_Y"], deadzone_threshold, 1.0);
+    axes["R2"] = process_input(msg->axes[5], -1.0, 1.0, alpha, axes["R2"], deadzone_threshold, 1.0);
+    axes["DPad_X"] = process_input(msg->axes[6], -1.0, 1.0, alpha, axes["DPad_X"], deadzone_threshold, 1.0);
+    axes["DPad_Y"] = process_input(msg->axes[7], -1.0, 1.0, alpha, axes["DPad_Y"], deadzone_threshold, 1.0);
 
     buttons["X"] = msg->buttons[0];
     buttons["Circle"] = msg->buttons[1];

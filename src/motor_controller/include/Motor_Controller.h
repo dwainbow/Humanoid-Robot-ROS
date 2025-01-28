@@ -31,6 +31,8 @@ public:
     void write_goal_velocity();
     void publish_motor_data();
 
+    void set_min_motor_degrees(int min_motor_degrees);
+    void set_max_motor_degrees(int max_motor_degrees);
     void reset_motor();
 
 private:
@@ -41,6 +43,8 @@ private:
     int goal_velocity; 
     int operating_mode;
     int baude_rate;
+    int min_motor_position;
+    int max_motor_position;
     float protocol_version;
     bool torque; 
 

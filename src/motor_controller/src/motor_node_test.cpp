@@ -61,11 +61,10 @@ Motor_Cluster build_left_arm_cluster(ros::NodeHandle nh){
 
     Motor_Controller motor_1 = Motor_Controller(nh, 1);
     motor_1.set_torque(true);
-    // motor_1.set_operating_mode(3);
-    // motor_1.set_goal_position(20000);
-    // motor_1.publish_motor_data();
-    // motor_1.reset_motor();
     motor_1.set_goal_velocity(1);
+    motor_1.set_max_motor_degrees(90);
+    motor_1.set_min_motor_degrees(0);
+   
 
     // Motor_Controller motor_2 = Motor_Controller(nh, 2);
     // motor_2.set_torque(true);
@@ -79,96 +78,96 @@ Motor_Cluster build_left_arm_cluster(ros::NodeHandle nh){
     // motor_3.set_goal_position(2048);
     // motor_3.set_goal_velocity(50);
 
-    left_arm_cluster.add_motor(motor_1);
+    left_arm_cluster.add_motor(motor_1, "Left_Stick_Y");
     // left_arm_cluster.add_motor(motor_2);
     // left_arm_cluster.add_motor(motor_3);
 
     return left_arm_cluster;
 }
 
-Motor_Cluster build_right_arm_cluster(ros::NodeHandle nh){
-    Motor_Cluster right_arm_cluster = Motor_Cluster(nh, Body_Part::RIGHT_ARM);
+// Motor_Cluster build_right_arm_cluster(ros::NodeHandle nh){
+//     Motor_Cluster right_arm_cluster = Motor_Cluster(nh, Body_Part::RIGHT_ARM);
 
-    Motor_Controller motor_4 = Motor_Controller(nh, 4);
-    motor_4.set_torque(true);
-    motor_4.set_operating_mode(3);
-    motor_4.set_goal_position(2048);
-    motor_4.set_goal_velocity(50);
+//     Motor_Controller motor_4 = Motor_Controller(nh, 4);
+//     motor_4.set_torque(true);
+//     motor_4.set_operating_mode(3);
+//     motor_4.set_goal_position(2048);
+//     motor_4.set_goal_velocity(50);
 
-    Motor_Controller motor_5 = Motor_Controller(nh, 5);
-    motor_5.set_torque(true);
-    motor_5.set_operating_mode(3);
-    motor_5.set_goal_position(2048);
-    motor_5.set_goal_velocity(50);
+//     Motor_Controller motor_5 = Motor_Controller(nh, 5);
+//     motor_5.set_torque(true);
+//     motor_5.set_operating_mode(3);
+//     motor_5.set_goal_position(2048);
+//     motor_5.set_goal_velocity(50);
 
-    Motor_Controller motor_6 = Motor_Controller(nh, 6);
-    motor_6.set_torque(true);
-    motor_6.set_operating_mode(3);
-    motor_6.set_goal_position(2048);
-    motor_6.set_goal_velocity(50);
+//     Motor_Controller motor_6 = Motor_Controller(nh, 6);
+//     motor_6.set_torque(true);
+//     motor_6.set_operating_mode(3);
+//     motor_6.set_goal_position(2048);
+//     motor_6.set_goal_velocity(50);
 
-    right_arm_cluster.add_motor(motor_4);
-    right_arm_cluster.add_motor(motor_5);
-    right_arm_cluster.add_motor(motor_6);
+//     right_arm_cluster.add_motor(motor_4);
+//     right_arm_cluster.add_motor(motor_5);
+//     right_arm_cluster.add_motor(motor_6);
 
-    return right_arm_cluster;
-}
+//     return right_arm_cluster;
+// }
 
-Motor_Cluster build_left_leg_cluster(ros::NodeHandle nh){
-    Motor_Cluster left_leg_cluster = Motor_Cluster(nh, Body_Part::LEFT_LEG);
+// Motor_Cluster build_left_leg_cluster(ros::NodeHandle nh){
+//     Motor_Cluster left_leg_cluster = Motor_Cluster(nh, Body_Part::LEFT_LEG);
 
-    Motor_Controller motor_7 = Motor_Controller(nh, 7);
-    motor_7.set_torque(true);
-    motor_7.set_operating_mode(3);
-    motor_7.set_goal_position(2048);
-    motor_7.set_goal_velocity(50);
+//     Motor_Controller motor_7 = Motor_Controller(nh, 7);
+//     motor_7.set_torque(true);
+//     motor_7.set_operating_mode(3);
+//     motor_7.set_goal_position(2048);
+//     motor_7.set_goal_velocity(50);
 
-    Motor_Controller motor_8 = Motor_Controller(nh, 8);
-    motor_8.set_torque(true);
-    motor_8.set_operating_mode(3);
-    motor_8.set_goal_position(2048);
-    motor_8.set_goal_velocity(50);
+//     Motor_Controller motor_8 = Motor_Controller(nh, 8);
+//     motor_8.set_torque(true);
+//     motor_8.set_operating_mode(3);
+//     motor_8.set_goal_position(2048);
+//     motor_8.set_goal_velocity(50);
 
-    Motor_Controller motor_9 = Motor_Controller(nh, 9);
-    motor_9.set_torque(true);
-    motor_9.set_operating_mode(3);
-    motor_9.set_goal_position(2048);
-    motor_9.set_goal_velocity(50);
+//     Motor_Controller motor_9 = Motor_Controller(nh, 9);
+//     motor_9.set_torque(true);
+//     motor_9.set_operating_mode(3);
+//     motor_9.set_goal_position(2048);
+//     motor_9.set_goal_velocity(50);
 
-    left_leg_cluster.add_motor(motor_7);
-    left_leg_cluster.add_motor(motor_8);
-    left_leg_cluster.add_motor(motor_9);
+//     left_leg_cluster.add_motor(motor_7);
+//     left_leg_cluster.add_motor(motor_8);
+//     left_leg_cluster.add_motor(motor_9);
 
-    return left_leg_cluster;
-}
+//     return left_leg_cluster;
+// }
 
-Motor_Cluster build_right_leg_cluster(ros::NodeHandle nh){
-    Motor_Cluster right_leg_cluster = Motor_Cluster(nh, Body_Part::RIGHT_LEG);
+// Motor_Cluster build_right_leg_cluster(ros::NodeHandle nh){
+//     Motor_Cluster right_leg_cluster = Motor_Cluster(nh, Body_Part::RIGHT_LEG);
 
-    Motor_Controller motor_10 = Motor_Controller(nh, 10);
-    motor_10.set_torque(true);
-    motor_10.set_operating_mode(3);
-    motor_10.set_goal_position(2048);
-    motor_10.set_goal_velocity(50);
+//     Motor_Controller motor_10 = Motor_Controller(nh, 10);
+//     motor_10.set_torque(true);
+//     motor_10.set_operating_mode(3);
+//     motor_10.set_goal_position(2048);
+//     motor_10.set_goal_velocity(50);
 
-    Motor_Controller motor_11 = Motor_Controller(nh, 11);
-    motor_11.set_torque(true);
-    motor_11.set_operating_mode(3);
-    motor_11.set_goal_position(2048);
-    motor_11.set_goal_velocity(50);
+//     Motor_Controller motor_11 = Motor_Controller(nh, 11);
+//     motor_11.set_torque(true);
+//     motor_11.set_operating_mode(3);
+//     motor_11.set_goal_position(2048);
+//     motor_11.set_goal_velocity(50);
 
-    Motor_Controller motor_12 = Motor_Controller(nh, 12);
-    motor_12.set_torque(true);
-    motor_12.set_operating_mode(3);
-    motor_12.set_goal_position(2048);
-    motor_12.set_goal_velocity(50);
+//     Motor_Controller motor_12 = Motor_Controller(nh, 12);
+//     motor_12.set_torque(true);
+//     motor_12.set_operating_mode(3);
+//     motor_12.set_goal_position(2048);
+//     motor_12.set_goal_velocity(50);
 
-    right_leg_cluster.add_motor(motor_10);
-    right_leg_cluster.add_motor(motor_11);
-    right_leg_cluster.add_motor(motor_12);
+//     right_leg_cluster.add_motor(motor_10);
+//     right_leg_cluster.add_motor(motor_11);
+//     right_leg_cluster.add_motor(motor_12);
 
-    return right_leg_cluster;
-}
+//     return right_leg_cluster;
+// }
 
 
 int main(int argc, char** argv)

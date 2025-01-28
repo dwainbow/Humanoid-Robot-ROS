@@ -11,6 +11,8 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id)
     torque = true ;
     baude_rate = 57600;
     protocol_version = 2.0;
+    min_motor_position = -360*4096/360;
+    max_motor_position= 360*4096/360;
 
     port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0"); //change to rfcomm0 for bluetooth connetcion 
     packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); //Protocol Version 2.0
@@ -103,8 +105,9 @@ int Motor_Controller::get_operating_mode()
 
 void Motor_Controller::set_goal_position(int position)
 {
-    ROS_INFO("Setting goal position for motor %d to %d", motor_id, position);
     goal_position = position;
+    goal_position = std::max(min_motor_position, std::min(goal_position, max_motor_position));
+    ROS_INFO("Setting goal position for motor %d to %d", motor_id, position);
 }
 
 void Motor_Controller::set_goal_velocity(int velocity)
@@ -153,6 +156,20 @@ void Motor_Controller::publish_motor_data() {
 
         ROS_INFO("Motor %d updated with scaled values: Position = %d, Velocity = %d",
                  motor_id, present_position, present_velocity);
+}
+
+/// @brief This creates the degree limit for min motor position
+/// @param min_motor_degrees 
+void Motor_Controller::set_min_motor_degrees(int min_motor_degrees)
+{
+    this->min_motor_position = (min_motor_degrees*4096)/360;
+}
+
+/// @brief This creates the degree limit for max motor position
+/// @param max_motor_degrees 
+void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
+{
+    this->max_motor_position = (max_motor_degrees*4096)/360;
 }
 
 void Motor_Controller::reset_motor()

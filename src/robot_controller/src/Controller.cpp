@@ -64,6 +64,7 @@ float Controller::apply_deadzone(float input, float deadzone_threshold)
     {
         return 0.0;
     }
+    std:: cout << "Input: " << input << std::endl;
     return input;
 }
 
@@ -97,9 +98,9 @@ float Controller::process_input(float input,float alpha, float prev_output, floa
 void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
 {   
 
-    const float alpha = 0.12;
-    const float deadzone_threshold = 0.05;
-    const float max_motor =  10000.0; //max motor value for the motor range, we probably want to define this range 
+    const float alpha = 0.6;
+    const float deadzone_threshold = 0.59;
+    const float max_motor =  1.0; //max motor value for the motor range, we probably want to define this range 
     
     axes["Left_Stick_X"] = this->process_input(msg->axes[0],alpha, axes["Left_Stick_X"], deadzone_threshold); //max_motor is dependent on the motor range
     motor_values["Left_Stick_X"] = this->map_to_motor(axes["Left_Stick_X"], max_motor);
@@ -149,7 +150,7 @@ void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
 void Controller::init_controller(ros::NodeHandle &nh)
 {
     pub = nh.advertise<robot_controller::controller_state>("/controller_metadata", 1);
-    sub = nh.subscribe<sensor_msgs::Joy>("/joy", 10, [this](const sensor_msgs::Joy::ConstPtr& msg) { //this is a lambda function to subsribe to the joy topic
+    sub = nh.subscribe<sensor_msgs::Joy>("/joy", 1, [this](const sensor_msgs::Joy::ConstPtr& msg) { //this is a lambda function to subsribe to the joy topic
     this->update(msg);
     });
 }

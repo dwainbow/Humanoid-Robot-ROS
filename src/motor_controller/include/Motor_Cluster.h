@@ -8,6 +8,7 @@
 #include <robot_controller/controller_state.h>
 
 
+
 enum class Body_Part {
     LEFT_ARM,
     RIGHT_ARM,
@@ -18,11 +19,11 @@ class Motor_Cluster {
     public:
         Motor_Cluster(ros::NodeHandle& nh, Body_Part body_part);
         void update_motor(int motor_id);
-        void add_motor(Motor_Controller motor);
+        void add_motor(Motor_Controller motor, std::string controller_key);
     private:
         ros::Subscriber subscriber; 
         Body_Part body_part;
-        std::map<int, Motor_Controller> motors;
+        std::map<int, std::pair<Motor_Controller, std::string>>motors;
         std::map<std::string, float> controller_keys;
 
         void read_controller_data(const robot_controller::controller_state &msg);        

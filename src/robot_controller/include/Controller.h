@@ -32,7 +32,12 @@ private:
     Controller() ;
     ~Controller();
 
+    float apply_low_pass_filter(float alpha, float prev_output, float new_input);
+    float map_to_motor(float normalized_value,float max_motor);
+    float apply_deadzone(float input, float deadzone_threshold);
+    float process_input(float input, float alpha, float prev_output, float deadzone_threshold);
     std::map<std::string, float> axes;
+    std::map<std::string, float> motor_values;
     std::map<std::string, int> buttons;
 
     ros:: Publisher pub;

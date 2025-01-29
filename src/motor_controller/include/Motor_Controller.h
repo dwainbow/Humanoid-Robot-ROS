@@ -8,27 +8,32 @@
 
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, std::string cluster);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id);
+    Motor_Controller() = default;
 
+    int get_id();
     int get_present_velocity();
     int get_present_position();
     int get_goal_position();
     int get_goal_velocity();
-    bool torque_enabled();
     int get_operating_mode();
+    bool torque_enabled();
+
+    void connect_motor();
 
     void set_goal_position(int position);
     void set_goal_velocity(int velocity);
     void set_torque(bool torque);
     void set_operating_mode(int mode);
 
-    void scale_velocity(float scaling_factor);
-    void scale_position(float scaling_factor);
-
     void write_torque();
     void write_goal_position();
     void write_goal_velocity();
+    void publish_motor_data();
 
+    void set_min_motor_degrees(int min_motor_degrees);
+    void set_max_motor_degrees(int max_motor_degrees);
+    void reset_motor();
 
 private:
     int motor_id;
@@ -37,17 +42,16 @@ private:
     int present_velocity;
     int goal_velocity; 
     int operating_mode;
+    int baude_rate;
+    int min_motor_position;
+    int max_motor_position;
+    float protocol_version;
     bool torque; 
 
-    std::string body_part ;
     std::string controller_key;
 
-    ros::Publisher publisher;
-
-    // Dynamixel SDK members
     dynamixel::PortHandler* port_handler;
     dynamixel::PacketHandler* packet_handler;
 
-    void update_motor(float position_scaling_factor = 1.0, float velocity_scaling_factor = 1.0);
 };
 #endif // MOTOR_CONTROLLER_H

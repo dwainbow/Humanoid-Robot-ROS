@@ -62,8 +62,8 @@ Motor_Cluster build_left_arm_cluster(ros::NodeHandle nh){
     Motor_Controller motor_1 = Motor_Controller(nh, 1);
     motor_1.set_torque(true);
     motor_1.set_goal_velocity(1);
-    motor_1.set_max_motor_degrees(90);
-    motor_1.set_min_motor_degrees(0);
+    motor_1.set_max_motor_degrees(180);
+    motor_1.set_min_motor_degrees(-180);
    
 
     // Motor_Controller motor_2 = Motor_Controller(nh, 2);

@@ -20,6 +20,7 @@ class Motor_Cluster {
         Motor_Cluster(ros::NodeHandle& nh, Body_Part body_part);
         void update_motor(int motor_id);
         void add_motor(Motor_Controller motor, std::string controller_key);
+        void update_motors();
     private:
         ros::Subscriber subscriber; 
         Body_Part body_part;

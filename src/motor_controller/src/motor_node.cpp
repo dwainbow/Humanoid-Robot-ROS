@@ -58,8 +58,6 @@ void scan_motors(){
 
 Motor_Cluster build_left_leg_cluster(ros::NodeHandle nh){
     Motor_Cluster left_leg_cluster = Motor_Cluster(nh, Body_Part::LEFT_ARM);
-
-
     
     Motor_Controller knee_motor_1 = Motor_Controller(nh, 1);
     knee_motor_1.set_torque(true);

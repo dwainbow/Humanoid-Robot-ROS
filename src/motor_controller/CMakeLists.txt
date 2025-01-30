@@ -213,7 +213,7 @@ include_directories(
 )
 
 
-add_executable(motor_node src/motor_node_test.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
+add_executable(motor_node src/motor_node.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
 
 
 ## Link against dependencies

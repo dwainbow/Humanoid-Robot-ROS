@@ -19,7 +19,7 @@ public:
     int get_operating_mode();
     bool torque_enabled();
 
-    void connect_motor();
+    bool connect_motor();
 
     void set_goal_position(int position);
     void set_goal_velocity(int velocity);
@@ -47,6 +47,7 @@ private:
     int max_motor_position;
     float protocol_version;
     bool torque; 
+    bool motor_connected;
 
     std::string controller_key;
 

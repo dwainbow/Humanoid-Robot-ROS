@@ -59,12 +59,22 @@ void scan_motors(){
 Motor_Cluster build_left_leg_cluster(ros::NodeHandle nh){
     Motor_Cluster left_leg_cluster = Motor_Cluster(nh, Body_Part::LEFT_ARM);
     
-    Motor_Controller knee_motor_1 = Motor_Controller(nh, 1);
-    knee_motor_1.set_torque(true);
-    knee_motor_1.set_max_motor_degrees(140);
-    knee_motor_1.set_min_motor_degrees(0);
+    Motor_Controller knee_motor_2 = Motor_Controller(nh, 1);
+    knee_motor_2.set_torque(true);
+    knee_motor_2.set_reverse(true);
+    knee_motor_2.set_starting_position(180);
+    knee_motor_2.set_max_motor_degrees(180);
    
-    left_leg_cluster.add_motor(knee_motor_1, "Left_Stick_Y");
+   
+    // Motor_Controller knee_motor_1 = Motor_Controller(nh, 6);
+    // knee_motor_1.set_torque(true);
+    // knee_motor_1.set_reverse(true);
+    // knee_motor_1.set_starting_position(360);
+    // knee_motor_1.set_max_motor_degrees(90);
+   
+
+    // left_leg_cluster.add_motor(knee_motor_1, "Left_Stick_Y");
+    left_leg_cluster.add_motor(knee_motor_2, "Left_Stick_Y");
 
     return left_leg_cluster;
 }

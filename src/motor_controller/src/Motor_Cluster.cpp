@@ -32,7 +32,7 @@ void Motor_Cluster::update_motor(int motor_id)
     goal_position -= change_in_position;
     }
 
-    ROS_INFO("Proposed motor %d goal position: %d", motor_id, goal_position);
+    // ROS_INFO("Proposed motor %d goal position: %d", motor_id, goal_position);
     motor.set_goal_position(goal_position); 
 
     // ROS_INFO("Motor %d present position: %d", motor_id, motor.get_present_position());

@@ -10,29 +10,26 @@
 
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate);
     Motor_Controller() = default;
 
     int get_id();
-    int get_present_velocity();
     int get_present_position();
     int get_goal_position();
-    int get_goal_velocity();
+    int get_starting_position();
     int get_operating_mode();
-    bool torque_enabled();
-    bool get_reverse();
 
+    bool get_reverse();
     bool connect_motor();
 
     void set_goal_position(int position);
-    void set_goal_velocity(int velocity);
     void set_torque(bool torque);
     void set_operating_mode(int mode);
     void set_starting_position(int position);
-
+   
     void write_torque();
     void write_goal_position();
-    void write_goal_velocity();
+    void write_operating_mode();
     void publish_motor_data();
 
     void set_min_motor_degrees(int min_motor_degrees);

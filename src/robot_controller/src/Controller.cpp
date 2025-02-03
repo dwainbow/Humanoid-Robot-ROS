@@ -141,10 +141,10 @@ void Controller::update(const sensor_msgs::Joy::ConstPtr& msg)
     //  axes["Left_Stick_X"], axes["Left_Stick_Y"], axes["L2"], axes["Right_Stick_X"], axes["Right_Stick_Y"], axes["R2"], axes["DPad_X"], axes["DPad_Y"],
     //     buttons["X"], buttons["Circle"], buttons["Square"], buttons["Triangle"], buttons["L1"], buttons["R1"], buttons["Share"], buttons["Options"], buttons["L3"], buttons["R3"] 
     // );
-    ROS_INFO("Axes: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f], Buttons: [%d, %d, %d, %d, %d, %d, %d, %d, %d, %d]",
-     motor_values["Left_Stick_X"], motor_values["Left_Stick_Y"], motor_values["L2"], motor_values["Right_Stick_X"], motor_values["Right_Stick_Y"], motor_values["R2"], motor_values["DPad_X"], motor_values["DPad_Y"],
-        buttons["X"], buttons["Circle"], buttons["Square"], buttons["Triangle"], buttons["L1"], buttons["R1"], buttons["Share"], buttons["Options"], buttons["L3"], buttons["R3"] 
-    );
+    // ROS_INFO("Axes: [%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f], Buttons: [%d, %d, %d, %d, %d, %d, %d, %d, %d, %d]",
+    //  motor_values["Left_Stick_X"], motor_values["Left_Stick_Y"], motor_values["L2"], motor_values["Right_Stick_X"], motor_values["Right_Stick_Y"], motor_values["R2"], motor_values["DPad_X"], motor_values["DPad_Y"],
+    //     buttons["X"], buttons["Circle"], buttons["Square"], buttons["Triangle"], buttons["L1"], buttons["R1"], buttons["Share"], buttons["Options"], buttons["L3"], buttons["R3"] 
+    // );
 }
 
 void Controller::init_controller(ros::NodeHandle &nh)

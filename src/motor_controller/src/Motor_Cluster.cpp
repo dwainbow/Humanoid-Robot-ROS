@@ -22,7 +22,7 @@ void Motor_Cluster::update_motor(int motor_id)
     auto controller_key = motor_pair.second;
     auto controller_value = controller_keys[controller_key];
     auto goal_position = motor.get_present_position();
- 
+    
     if (motor.get_reverse()) {
     change_in_position = -change_in_position;  
     }

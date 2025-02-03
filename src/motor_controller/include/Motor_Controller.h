@@ -5,6 +5,8 @@
 #include <dynamixel_sdk/dynamixel_sdk.h>
 #include <string> 
 #include <sensor_msgs/JointState.h>
+#include <boost/algorithm/clamp.hpp>
+
 
 class Motor_Controller {
 public:
@@ -18,13 +20,15 @@ public:
     int get_goal_velocity();
     int get_operating_mode();
     bool torque_enabled();
+    bool get_reverse();
 
-    void connect_motor();
+    bool connect_motor();
 
     void set_goal_position(int position);
     void set_goal_velocity(int velocity);
     void set_torque(bool torque);
     void set_operating_mode(int mode);
+    void set_starting_position(int position);
 
     void write_torque();
     void write_goal_position();
@@ -34,6 +38,7 @@ public:
     void set_min_motor_degrees(int min_motor_degrees);
     void set_max_motor_degrees(int max_motor_degrees);
     void reset_motor();
+    void set_reverse(bool reverse_position);
 
 private:
     int motor_id;
@@ -45,8 +50,11 @@ private:
     int baude_rate;
     int min_motor_position;
     int max_motor_position;
+    int starting_position;
     float protocol_version;
     bool torque; 
+    bool motor_connected;
+    bool reverse_position;
 
     std::string controller_key;
 

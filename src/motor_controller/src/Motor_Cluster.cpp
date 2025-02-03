@@ -10,24 +10,29 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
     });
 }
 
+
 void Motor_Cluster::update_motor(int motor_id)
 {
-    //TODO This needs to be modified, the current methodoloy is not great for controlling the motor 
 
-    const auto change_in_position = 500; 
+
+    auto change_in_position = 500; 
     
     auto motor_pair = motors[motor_id];
     auto motor = motor_pair.first;
     auto controller_key = motor_pair.second;
     auto controller_value = controller_keys[controller_key];
     auto goal_position = motor.get_present_position();
-    if (controller_value>0){
-        goal_position += change_in_position;
-    } else if (controller_value<0){
-        goal_position -= change_in_position;
+ 
+    if (motor.get_reverse()) {
+    change_in_position = -change_in_position;  
+    }
+    if (controller_value > 0){
+    goal_position += change_in_position;
+    } else if (controller_value < 0){
+    goal_position -= change_in_position;
     }
 
- 
+    // ROS_INFO("Proposed motor %d goal position: %d", motor_id, goal_position);
     motor.set_goal_position(goal_position); 
 
     // ROS_INFO("Motor %d present position: %d", motor_id, motor.get_present_position());
@@ -39,6 +44,16 @@ void Motor_Cluster::add_motor(Motor_Controller motor, std::string controller_key
 {
     auto pair = std::make_pair(motor, controller_key);
     motors[motor.get_id()] = pair;
+    
+}
+
+void Motor_Cluster::update_motors()
+{   
+    //now the update motor function, depending on the part and the joint we should update 
+    for (const auto &motor_pair : motors) {
+        // ROS_INFO("Updating motor %d", motor_pair.first);
+        update_motor(motor_pair.first);
+    }
 }
 
 void Motor_Cluster::read_controller_data(const robot_controller::controller_state &msg)
@@ -64,7 +79,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
         std::string key = axis.key.c_str();
         if (keys_of_interest.find(key) != keys_of_interest.end()) {
             controller_keys[key] = axis.value;
-            ROS_INFO("Axis key: %s, value: %f", key.c_str(), axis.value);
+            // ROS_INFO("Axis key: %s, value: %f", key.c_str(), axis.value);
         }
     }
 }

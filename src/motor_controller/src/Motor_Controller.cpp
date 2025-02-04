@@ -1,6 +1,6 @@
 #include "Motor_Controller.h"
 
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position)
 {
     this->motor_id = motor_id;
     this->baude_rate = baude_rate;
@@ -9,7 +9,7 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     min_motor_position = -4096;
     max_motor_position= 4096;
     present_position = 0;
-    starting_position = 0;
+    this->set_starting_position(starting_position);
     torque = true ;
     reverse_position = false;
     operating_mode = 5;
@@ -129,8 +129,7 @@ void Motor_Controller::set_starting_position(int position)
 {   
     starting_position = reverse_position ? -4096*position/360 : 4096*position/360;
     goal_position = starting_position;
-    this->publish_motor_data();
-  
+    // this->publish_motor_data();
 }
 
 void Motor_Controller::write_torque()
@@ -142,9 +141,7 @@ void Motor_Controller::write_torque()
 void Motor_Controller::write_goal_position()
 {
     uint8_t dxl_error = 0;
- 
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
-
 }
 
 void Motor_Controller::publish_motor_data() {

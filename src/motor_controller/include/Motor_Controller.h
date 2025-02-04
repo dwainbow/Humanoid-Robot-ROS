@@ -6,11 +6,12 @@
 #include <string> 
 #include <sensor_msgs/JointState.h>
 #include <boost/algorithm/clamp.hpp>
+#include <unistd.h> 
 
 
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate, int starting_position);
     Motor_Controller() = default;
 
     int get_id();

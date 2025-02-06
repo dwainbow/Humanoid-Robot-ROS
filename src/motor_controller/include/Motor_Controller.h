@@ -7,10 +7,10 @@
 #include <sensor_msgs/JointState.h>
 #include <boost/algorithm/clamp.hpp>
 
-
+//TODO: add hard coding, for knee and motor joints (set motor x to this positon and so on for the test)
 class Motor_Controller {
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate);
+    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate, int starting_position ,bool reverse_position);
     Motor_Controller() = default;
 
     int get_id();
@@ -18,6 +18,7 @@ public:
     int get_goal_position();
     int get_starting_position();
     int get_operating_mode();
+    int set_starting_position(int position);
 
     bool get_reverse();
     bool connect_motor();
@@ -25,17 +26,17 @@ public:
     void set_goal_position(int position);
     void set_torque(bool torque);
     void set_operating_mode(int mode);
-    void set_starting_position(int position);
    
     void write_torque();
     void write_goal_position();
     void write_operating_mode();
     void publish_motor_data();
 
-    void set_min_motor_degrees(int min_motor_degrees);
     void set_max_motor_degrees(int max_motor_degrees);
     void reset_motor();
-    void set_reverse(bool reverse_position);
+
+    void set_offset();
+    void go_to_starting_position();
 
 private:
     int motor_id;

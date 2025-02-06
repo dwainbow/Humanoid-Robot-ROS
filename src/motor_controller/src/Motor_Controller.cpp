@@ -1,27 +1,35 @@
 #include "Motor_Controller.h"
 
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, bool reverse_position = false)
 {
-    this->motor_id = motor_id;
-    this->baude_rate = baude_rate;
-    goal_position = 0;
-    protocol_version = 2.0;
-    min_motor_position = -4096;
-    max_motor_position= 4096;
-    present_position = 0;
-    starting_position = 0;
-    torque = true ;
-    reverse_position = false;
-    operating_mode = 5;
-
     port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0"); //change to rfcomm0 for bluetooth connetcion 
     packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); //Protocol Version 2.0
 
-    motor_connected = this->connect_motor();
+    this->motor_id = motor_id;
+    this->baude_rate = baude_rate;
+    this->reverse_position = reverse_position;
 
+    motor_connected = this->connect_motor();
     if(motor_connected){
+        this->starting_position = this->set_starting_position(starting_position);
+        // present_position = get_present_position();
+        // this->set_offset();
+
+
+        protocol_version = 2.0;
+        max_motor_position= 4096;
+        torque = true ;
+        reverse_position = false;
+        operating_mode = 5;
         this->reset_motor();
     }
+    else{
+        return;
+    }
+
+
+
+
 }
 
 bool Motor_Controller::connect_motor()
@@ -125,11 +133,14 @@ void Motor_Controller::write_operating_mode()
     packet_handler->write1ByteTxRx(port_handler, motor_id, 11, operating_mode, &dxl_error);
 }
 
-void Motor_Controller::set_starting_position(int position)
+int Motor_Controller::set_starting_position(int position)
 {   
+    // ROS_INFO("Present Position: %d", this->get_present_position())
     starting_position = reverse_position ? -4096*position/360 : 4096*position/360;
-    goal_position = starting_position;
-    this->publish_motor_data();
+    ROS_INFO("Starting Position on Startup: %d", starting_position );
+    // goal_position = starting_position;
+    // this->publish_motor_data();
+    return starting_position;
   
 }
 
@@ -142,28 +153,22 @@ void Motor_Controller::write_torque()
 void Motor_Controller::write_goal_position()
 {
     uint8_t dxl_error = 0;
- 
+    
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
 
 }
 
 void Motor_Controller::publish_motor_data() {
-    this->write_torque();
+    ROS_INFO("Present Position: %d", this->get_present_position());
     this->write_goal_position();
 }
 
-/// @brief This creates the degree limit for min motor position
-/// @param min_motor_degrees 
-void Motor_Controller::set_min_motor_degrees(int min_motor_degrees)
-{
-    this->min_motor_position = present_position+(min_motor_degrees*4096)/360;
-}
 
 /// @brief This creates the degree limit for max motor position
 /// @param max_motor_degrees 
 void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 {
-    ROS_INFO("Starting Position: %d", starting_position);
+    // ROS_INFO("Starting Position: %d", starting_position);
     auto converted_position = (max_motor_degrees*4096)/360;
     if(reverse_position){
         this->max_motor_position = starting_position - converted_position ;      
@@ -176,11 +181,39 @@ void Motor_Controller::reset_motor()
 {
     this->set_operating_mode(operating_mode);
     this->set_torque(true);
+    this->go_to_starting_position();
     this->publish_motor_data();
+    // exit(0);
     ROS_INFO("Motor %d reset", motor_id);
+    ROS_INFO("Goal position %d", goal_position);
+    ROS_INFO("Present Positon: %d", this->get_present_position());
+
+    //I suspect it might be a time issue 
+    // exit(0);
 }
 
-void Motor_Controller::set_reverse(bool reverse_position)
+void Motor_Controller :: set_offset(){
+    uint8_t dxl_error = 0;
+    ROS_INFO("Reading");
+    int dxl_comm_result = packet_handler->read4ByteTxRx(port_handler, motor_id, 20, (uint32_t*)&present_position, &dxl_error);
+    ROS_INFO("REad offset");
+}
+
+void Motor_Controller::go_to_starting_position()
 {
-    this->reverse_position = reverse_position;
+    int d1 = std::abs(starting_position - present_position);
+    int d2 = std::abs((starting_position + 4096) - present_position);
+    int d3 = std::abs((starting_position - 4096) - present_position);
+
+    int corrected_goal = starting_position;
+
+    if(d2<d1){
+        corrected_goal = starting_position+4096;
+    }
+    else if (d3 < d1){
+        corrected_goal = starting_position - 4096;
+    }
+
+    goal_position = corrected_goal;
+    
 }

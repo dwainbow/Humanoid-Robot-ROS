@@ -64,7 +64,6 @@ float Controller::apply_deadzone(float input, float deadzone_threshold)
     {
         return 0.0;
     }
-    std:: cout << "Input: " << input << std::endl;
     return input;
 }
 

@@ -15,6 +15,7 @@ int main(int argc, char** argv)
     Controller& controller = Controller::get_instance();
     controller.init_controller(nh);
     
+    ROS_INFO("Controller Launched");
     ros::Rate loop_rate(50); //keep this in range of 10-50 Hz
     while (ros::ok()) {
         // Call the publish_data method to publish messages

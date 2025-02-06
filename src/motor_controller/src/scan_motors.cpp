@@ -41,7 +41,7 @@ void scan_motors(){
                 if (dxl_comm_result == COMM_SUCCESS) {
                     ROS_INFO("Motor found! ID: %d, Model Number: %d, Protocol: %.1f, Baud Rate: %d",
                              id, model_number, protocol_version, baud_rates[i]);
-                    break;
+                    // break;
                 } else if (dxl_comm_result != COMM_TX_FAIL) {
                     ROS_WARN("Error with ID %d: %s", id, packetHandler->getTxRxResult(dxl_comm_result));
                 }

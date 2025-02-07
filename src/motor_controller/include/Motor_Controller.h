@@ -3,14 +3,15 @@
 
 #include <ros/ros.h>
 #include <dynamixel_sdk/dynamixel_sdk.h>
-#include <string> 
+#include <string>
 #include <sensor_msgs/JointState.h>
 #include <boost/algorithm/clamp.hpp>
 
-//TODO: add hard coding, for knee and motor joints (set motor x to this positon and so on for the test)
-class Motor_Controller {
+// TODO: add hard coding, for knee and motor joints (set motor x to this positon and so on for the test)
+class Motor_Controller
+{
 public:
-    Motor_Controller(ros::NodeHandle& nh,int motor_id, int baude_rate, int starting_position ,bool reverse_position);
+    Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, bool reverse_position);
     Motor_Controller() = default;
 
     int get_id();
@@ -26,7 +27,7 @@ public:
     void set_goal_position(int position);
     void set_torque(bool torque);
     void set_operating_mode(int mode);
-   
+
     void write_torque();
     void write_goal_position();
     void write_operating_mode();
@@ -42,22 +43,16 @@ private:
     int motor_id;
     int goal_position;
     int present_position;
-    int present_velocity;
-    int goal_velocity; 
     int operating_mode;
     int baude_rate;
-    int min_motor_position;
     int max_motor_position;
     int starting_position;
     float protocol_version;
-    bool torque; 
+    bool torque;
     bool motor_connected;
     bool reverse_position;
 
-    std::string controller_key;
-
-    dynamixel::PortHandler* port_handler;
-    dynamixel::PacketHandler* packet_handler;
-
+    dynamixel::PortHandler *port_handler;
+    dynamixel::PacketHandler *packet_handler;
 };
 #endif // MOTOR_CONTROLLER_H

@@ -1,0 +1,1 @@
+rosrun motor_controller scan_motors

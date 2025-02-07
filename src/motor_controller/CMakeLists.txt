@@ -220,3 +220,7 @@ add_executable(motor_node src/motor_node.cpp src/Motor_Controller.cpp src/Motor_
 target_link_libraries(motor_node ${catkin_LIBRARIES})
 add_dependencies(motor_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+add_executable(scan_motors src/scan_motors.cpp )
+target_link_libraries(scan_motors ${catkin_LIBRARIES})
+
+

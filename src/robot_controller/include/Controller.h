@@ -7,42 +7,43 @@
 #include "robot_controller/controller_state.h"
 #include <ros/ros.h>
 
-
-class Controller {
+class Controller
+{
 public:
     // Delete copy constructor and assignment operator to enforce singleton
-    Controller(const Controller& obj) = delete;
-    Controller& operator=(const Controller& obj) = delete;
+    Controller(const Controller &obj) = delete;
+    Controller &operator=(const Controller &obj) = delete;
 
     // Accessor for the singleton instance
-    static Controller& get_instance() {
+    static Controller &get_instance()
+    {
         static Controller instance;
         return instance;
     }
 
     // Public methods
-    double get_axis(const std::string& key);
-    int get_button(const std::string& key);
-    void update(const sensor_msgs::Joy::ConstPtr& msg);
+    double get_axis(const std::string &key);
+    int get_button(const std::string &key);
+    void update(const sensor_msgs::Joy::ConstPtr &msg);
     void publish_data();
     void init_controller(ros::NodeHandle &nh);
 
-private:    
+private:
     // Private constructor and member variables
-    Controller() ;
+    Controller();
     ~Controller();
 
     float apply_low_pass_filter(float alpha, float prev_output, float new_input);
-    float map_to_motor(float normalized_value,float max_motor);
+    float map_to_motor(float normalized_value, float max_motor);
     float apply_deadzone(float input, float deadzone_threshold);
     float process_input(float input, float alpha, float prev_output, float deadzone_threshold);
     std::map<std::string, float> axes;
     std::map<std::string, float> motor_values;
     std::map<std::string, int> buttons;
 
-    ros:: Publisher pub;
-    ros:: Subscriber sub;
-    ros:: NodeHandle nh;
+    ros::Publisher pub;
+    ros::Subscriber sub;
+    ros::NodeHandle nh;
 
     robot_controller::controller_state state_msg;
 };

@@ -36,7 +36,7 @@ void scan_motors()
             dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(protocol_version);
             ROS_INFO("Using Protocol Version: %.1f", protocol_version);
 
-            // Scan through all valid IDs (0 to 252)
+            // Scan through all valid IDs (0 to 20)
             for (int id = 0; id <= 20; ++id)
             {
                 uint16_t model_number = 0;

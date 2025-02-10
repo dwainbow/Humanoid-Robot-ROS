@@ -19,7 +19,7 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     motor_connected = this->connect_motor();
     if (motor_connected)
     {
-        operating_mode = 5;
+        operating_mode = 4;
         this->set_operating_mode(operating_mode);
         drive_mode = reverse_position ? 1 : 0;
         this->set_drive_mode(drive_mode);

@@ -8,6 +8,7 @@
 /// @param reverse_position : Reverse the position of the motor
 Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, bool reverse_position = false)
 {
+    protocol_version = 2.0;
     port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");         // change to rfcomm0 for bluetooth connetcion
     packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); // Protocol Version 2.0
 
@@ -18,13 +19,15 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     motor_connected = this->connect_motor();
     if (motor_connected)
     {
-        this->starting_position = this->set_starting_position(starting_position);
-        present_position = get_present_position();
-        // this->set_offset();
-        protocol_version = 2.0;
-        max_motor_position = reverse_position ? -4096 : 4096;
-        torque = true;
         operating_mode = 5;
+        this->set_operating_mode(operating_mode);
+        drive_mode = reverse_position ? 1 : 0;
+        this->set_drive_mode(drive_mode);
+        this->starting_position = this->set_starting_position(starting_position);
+
+        protocol_version = 2.0;
+        max_motor_position = 0;
+        torque = true;
         this->reset_motor();
     }
     else
@@ -125,11 +128,6 @@ bool Motor_Controller::get_reverse()
 void Motor_Controller::set_goal_position(int position)
 {
     goal_position = position;
-    if (reverse_position)
-    {
-        goal_position = boost::algorithm::clamp(goal_position, max_motor_position, starting_position);
-        return;
-    }
     goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
 }
 
@@ -161,8 +159,8 @@ void Motor_Controller::write_operating_mode()
 /// @return starting_position
 int Motor_Controller::set_starting_position(int position)
 {
-    starting_position = reverse_position ? -4096 * position / 360 : 4096 * position / 360;
-    ROS_INFO("Starting Position on Startup: %d", starting_position);
+    starting_position = 4096 * position / 360;
+    goal_position = starting_position;
     return starting_position;
 }
 
@@ -191,51 +189,26 @@ void Motor_Controller::publish_motor_data()
 void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 {
     auto converted_position = (max_motor_degrees * 4096) / 360;
-    if (reverse_position)
-    {
-        this->max_motor_position = starting_position - converted_position;
-        return;
-    }
     this->max_motor_position = starting_position + converted_position;
 }
 
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
-    this->set_operating_mode(operating_mode);
     this->set_torque(true);
-    this->go_to_starting_position();
     this->publish_motor_data();
 
+    // TODO: Uncomment until we have sorted out threading
+    //  while(std:: abs(this->get_present_position() - goal_position) > 10)
+    //  {
+    //      ros::Duration(0.1).sleep();
+    //  }
     ROS_INFO("Motor %d reset", motor_id);
-    ROS_INFO("Goal position %d", goal_position);
-    ROS_INFO("Present Positon: %d", this->get_present_position());
 }
 
-/// @brief Set the offset of the motor
-void Motor_Controller ::set_offset()
+void Motor_Controller::set_drive_mode(int drive_mode)
 {
+    this->drive_mode = drive_mode;
     uint8_t dxl_error = 0;
-    int dxl_comm_result = packet_handler->read4ByteTxRx(port_handler, motor_id, 20, (uint32_t *)&present_position, &dxl_error);
-}
-
-/// @brief Go to the starting position of the motor
-void Motor_Controller::go_to_starting_position()
-{
-    int d1 = std::abs(starting_position - present_position);
-    int d2 = std::abs((starting_position + 4096) - present_position);
-    int d3 = std::abs((starting_position - 4096) - present_position);
-
-    int corrected_goal = starting_position;
-
-    if (d2 < d1)
-    {
-        corrected_goal = starting_position + 4096;
-    }
-    else if (d3 < d1)
-    {
-        corrected_goal = starting_position - 4096;
-    }
-
-    goal_position = corrected_goal;
+    int dxl_comm_result = packet_handler->write1ByteTxRx(port_handler, motor_id, 10, drive_mode, &dxl_error);
 }

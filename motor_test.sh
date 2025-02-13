@@ -1,0 +1,1 @@
+rosrun motor_controller motor_test

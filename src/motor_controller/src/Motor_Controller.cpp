@@ -6,7 +6,7 @@
 /// @param baude_rate : Baud Rate of the motor
 /// @param starting_position : Starting position of the motor (deg)
 /// @param reverse_position : Reverse the position of the motor
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, bool reverse_position = false)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, int max_degrees, bool reverse_position = false)
 {
     protocol_version = 2.0;
     port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");         // change to rfcomm0 for bluetooth connetcion
@@ -20,12 +20,11 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     if (motor_connected)
     {
         operating_mode = 4;
-        this->set_operating_mode(operating_mode);
         drive_mode = reverse_position ? 1 : 0;
+        this->set_operating_mode(operating_mode);
         this->set_drive_mode(drive_mode);
         this->starting_position = this->set_starting_position(starting_position);
-
-        max_motor_position = 0;
+        this->set_max_motor_degrees(max_degrees);
         torque = true;
         this->reset_motor();
     }
@@ -160,6 +159,7 @@ int Motor_Controller::set_starting_position(int position)
 {
     starting_position = 4096 * position / 360;
     goal_position = starting_position;
+    this->write_goal_position();
     return starting_position;
 }
 
@@ -198,10 +198,10 @@ void Motor_Controller::reset_motor()
     this->publish_motor_data();
 
     // TODO: Uncomment until we have sorted out threading
-     while(std:: abs(this->get_present_position() - goal_position) > 10)
-     {
-         ros::Duration(0.1).sleep();
-     }
+    // while (std::abs(this->get_present_position() - goal_position) > 10)
+    // {
+    //     ros::Duration(0.1).sleep();
+    // }
     ROS_INFO("Motor %d reset", motor_id);
 }
 

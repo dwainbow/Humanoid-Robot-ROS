@@ -12,7 +12,7 @@
 class Motor_Controller
 {
 public:
-    Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, bool reverse_position);
+    Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position,  int max_degrees, bool reverse_position);
     Motor_Controller() = default;
 
     int get_id();

@@ -25,7 +25,6 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
         this->set_drive_mode(drive_mode);
         this->starting_position = this->set_starting_position(starting_position);
 
-        protocol_version = 2.0;
         max_motor_position = 0;
         torque = true;
         this->reset_motor();
@@ -199,10 +198,10 @@ void Motor_Controller::reset_motor()
     this->publish_motor_data();
 
     // TODO: Uncomment until we have sorted out threading
-    //  while(std:: abs(this->get_present_position() - goal_position) > 10)
-    //  {
-    //      ros::Duration(0.1).sleep();
-    //  }
+     while(std:: abs(this->get_present_position() - goal_position) > 10)
+     {
+         ros::Duration(0.1).sleep();
+     }
     ROS_INFO("Motor %d reset", motor_id);
 }
 

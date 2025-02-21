@@ -52,16 +52,12 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     //Upper leg parts
-    Motor_Controller knee_motor_1 = Motor_Controller(nh, 1, 3000000, 0, true);
-    Motor_Controller knee_motor_2 = Motor_Controller(nh, 2, 3000000, 0, false);
-    knee_motor_1.set_max_motor_degrees(90);
-    knee_motor_2.set_max_motor_degrees(90);
+    Motor_Controller knee_motor_1 = Motor_Controller(nh, 1, 3000000, 0, 90,true);
+    Motor_Controller knee_motor_2 = Motor_Controller(nh, 2, 3000000, 0, 90,false);
 
     //Lower leg part 
-    Motor_Controller knee_motor_3 = Motor_Controller(nh, 3, 3000000, 0, true);
-    Motor_Controller knee_motor_4 = Motor_Controller(nh, 4, 3000000, 0, false);
-    knee_motor_3.set_max_motor_degrees(45);
-    knee_motor_4.set_max_motor_degrees(45);
+    Motor_Controller knee_motor_3 = Motor_Controller(nh, 3, 3000000, 0, 45,true);
+    Motor_Controller knee_motor_4 = Motor_Controller(nh, 4, 3000000, 0, 45,false);
 
     while (ros::ok())
     {

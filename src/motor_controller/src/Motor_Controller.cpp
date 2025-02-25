@@ -16,22 +16,17 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->baude_rate = baude_rate;
     this->reverse_position = reverse_position;
 
+    publisher = nh.advertise<std_msgs::Int32>("/motor_controller_" + std::to_string(motor_id) + "/goal_position", 1);
     motor_connected = this->connect_motor();
-    if (motor_connected)
-    {
-        operating_mode = 4;
-        drive_mode = reverse_position ? 1 : 0;
-        this->set_operating_mode(operating_mode);
-        this->set_drive_mode(drive_mode);
-        this->starting_position = this->set_starting_position(starting_position);
-        this->set_max_motor_degrees(max_degrees);
-        torque = true;
-        this->reset_motor();
-    }
-    else
-    {
-        return;
-    }
+    if (!motor_connected){return;}
+    operating_mode = 4;
+    drive_mode = reverse_position ? 1 : 0;
+    this->set_operating_mode(operating_mode);
+    this->set_drive_mode(drive_mode);
+    this->starting_position = this->set_starting_position(starting_position);
+    this->set_max_motor_degrees(max_degrees);
+    this->set_torque(true);
+    this->reset_motor();
 }
 
 /// @brief Connect to the motor
@@ -127,6 +122,7 @@ void Motor_Controller::set_goal_position(int position)
 {
     goal_position = position;
     goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
+    this->publish_motor_data();
 }
 
 /// @brief Set the torque of the motor
@@ -177,16 +173,51 @@ void Motor_Controller::write_goal_position()
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
 }
 
-/// @brief Publish motor data
+
+void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
+{
+    std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
+    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1, 
+        [this](const std_msgs::Int32::ConstPtr& msg)
+        {
+            this->set_goal_position(msg->data);
+            this->write_goal_position();
+        });
+}
+
+
 void Motor_Controller::publish_motor_data()
 {
-    this->write_goal_position();
+
+    if (publisher.getNumSubscribers() == 0)
+    {
+        // ROS_WARN("No subscribers for %s, skipping publish", publisher.getTopic().c_str());
+        return;
+    }
+    std_msgs::Int32 msg;
+    msg.data = this->get_goal_position();
+
+    publisher.publish(msg);
+}
+
+ros::Subscriber Motor_Controller::get_subscriber()
+{
+    return subscriber;
+}
+
+ros::Publisher Motor_Controller::get_publisher()
+{
+    return publisher;
 }
 
 /// @brief Set the maximum motor degrees
 /// @param max_motor_degrees : Maximum motor degrees to set
 void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 {
+    if(max_motor_degrees <0 ){
+        ROS_ERROR("Max motor degrees cannot be negative");
+        return;
+    }
     auto converted_position = (max_motor_degrees * 4096) / 360;
     this->max_motor_position = starting_position + converted_position;
 }
@@ -194,8 +225,7 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
-    this->set_torque(true);
-    this->publish_motor_data();
+    this->write_goal_position();
 
     // TODO: Uncomment until we have sorted out threading
     // while (std::abs(this->get_present_position() - goal_position) > 10)

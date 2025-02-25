@@ -11,15 +11,12 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
         });
 }
 
-void Motor_Cluster::update_motor(int motor_id)
+void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
 {
-
+   
     auto change_in_position = 500;
-    auto motor_pair = motors[motor_id];
-    auto motor = motor_pair.first;
-    auto controller_key = motor_pair.second;
     auto controller_value = controller_keys[controller_key];
-    auto goal_position = motor.get_present_position();
+    auto goal_position = motor->get_present_position();
 
     if (controller_value > 0)
     {
@@ -30,21 +27,34 @@ void Motor_Cluster::update_motor(int motor_id)
         goal_position -= change_in_position;
     }
 
-    motor.set_goal_position(goal_position);
-    motor.publish_motor_data();
+    motor->set_goal_position(goal_position);
+    motor->publish_motor_data();
+    motor->write_goal_position();
 }
 
-void Motor_Cluster::add_motor(Motor_Controller motor, std::string controller_key)
+void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
 {
-    auto pair = std::make_pair(motor, controller_key);
-    motors[motor.get_id()] = pair;
+    if (!motor)
+    {
+        ROS_ERROR("add_motor() received a null pointer!");
+        return;
+    }
+
+    motors[motor->get_id()] = std::make_pair(motor, controller_key);
 }
 
 void Motor_Cluster::update_motors()
 {
     for (const auto &motor_pair : motors)
     {
-        update_motor(motor_pair.first);
+        auto motor = motor_pair.second.first;
+        auto controller_key = motor_pair.second.second;
+        if (motor->get_subscriber().getNumPublishers() > 0)
+        {   
+            continue;
+        }
+
+        update_motor(motor, controller_key);
     }
 }
 

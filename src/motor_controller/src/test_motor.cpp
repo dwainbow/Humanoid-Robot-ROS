@@ -6,9 +6,9 @@
 void motor_test(Motor_Controller knee_motor_1, Motor_Controller knee_motor_2, Motor_Controller knee_motor_3, Motor_Controller knee_motor_4)
 {
 
-    int num_cycles = 10;                         // Number of oscillations
+    int num_cycles = 10;                      // Number of oscillations
     auto upper_positions = (90 * 4096) / 360; // 90-degree position
-    auto lower_positions = (45 * 4096) / 360;       // 180-degree position
+    auto lower_positions = (45 * 4096) / 360; // 180-degree position
 
     ROS_INFO("Starting oscillation test...");
 
@@ -25,7 +25,6 @@ void motor_test(Motor_Controller knee_motor_1, Motor_Controller knee_motor_2, Mo
         knee_motor_2.write_goal_position();
         knee_motor_3.write_goal_position();
         knee_motor_4.write_goal_position();
-
 
         ros::Duration(2).sleep();
 
@@ -51,17 +50,17 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "motor_test");
     ros::NodeHandle nh;
 
-    //Upper leg parts
-    Motor_Controller knee_motor_1 = Motor_Controller(nh, 1, 3000000, 0, 90,true);
-    Motor_Controller knee_motor_2 = Motor_Controller(nh, 2, 3000000, 0, 90,false);
+    // Upper leg parts
+    Motor_Controller knee_motor_1 = Motor_Controller(nh, 1, 3000000, 0, 90, true);
+    Motor_Controller knee_motor_2 = Motor_Controller(nh, 2, 3000000, 0, 90, false);
 
-    //Lower leg part 
-    Motor_Controller knee_motor_3 = Motor_Controller(nh, 3, 3000000, 0, 45,true);
-    Motor_Controller knee_motor_4 = Motor_Controller(nh, 4, 3000000, 0, 45,false);
+    // Lower leg part
+    Motor_Controller knee_motor_3 = Motor_Controller(nh, 3, 3000000, 0, 45, true);
+    Motor_Controller knee_motor_4 = Motor_Controller(nh, 4, 3000000, 0, 45, false);
 
     while (ros::ok())
     {
-        motor_test(knee_motor_1,knee_motor_2,knee_motor_3,knee_motor_4);
+        motor_test(knee_motor_1, knee_motor_2, knee_motor_3, knee_motor_4);
         ros::spinOnce();
     }
 

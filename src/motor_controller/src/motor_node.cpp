@@ -6,17 +6,20 @@ Motor_Cluster build_left_leg_cluster(ros::NodeHandle nh)
 {
     Motor_Cluster left_leg_cluster = Motor_Cluster(nh, Body_Part::LEFT_LEG);
 
-    auto bd_rate = 57600;
+    auto bd_rate = 3000000;
 
     // Use `std::shared_ptr` to store motors dynamically
-    std::shared_ptr<Motor_Controller> knee_motor_1 = std::make_shared<Motor_Controller>(nh, 1, bd_rate, 45, 45, true);
-    std::shared_ptr<Motor_Controller> knee_motor_2 = std::make_shared<Motor_Controller>(nh, 2, bd_rate, 45, 45, false);
+    std::shared_ptr<Motor_Controller> knee_motor_1 = std::make_shared<Motor_Controller>(nh, 1, bd_rate, 0, 120, true);
+    std::shared_ptr<Motor_Controller> knee_motor_2 = std::make_shared<Motor_Controller>(nh, 2, bd_rate, 0, 120, false);
+    std::shared_ptr<Motor_Controller> knee_motor_3 = std::make_shared<Motor_Controller>(nh, 3, bd_rate, 0, 120, false);
 
     knee_motor_2->sync_motor_with(nh, *knee_motor_1);
+    knee_motor_3->sync_motor_with(nh, *knee_motor_1);
 
     // Add motors to cluster
     left_leg_cluster.add_motor(knee_motor_1, "Left_Stick_Y");
     left_leg_cluster.add_motor(knee_motor_2, "Left_Stick_Y");
+    left_leg_cluster.add_motor(knee_motor_3, "Left_Stick_Y");
 
     return left_leg_cluster;
 }

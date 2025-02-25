@@ -173,18 +173,16 @@ void Motor_Controller::write_goal_position()
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
 }
 
-
 void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
 {
     std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
-    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1, 
-        [this](const std_msgs::Int32::ConstPtr& msg)
-        {
-            this->set_goal_position(msg->data);
-            this->write_goal_position();
-        });
+    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1,
+                                               [this](const std_msgs::Int32::ConstPtr &msg)
+                                               {
+                                                   this->set_goal_position(msg->data);
+                                                   this->write_goal_position();
+                                               });
 }
-
 
 void Motor_Controller::publish_motor_data()
 {
@@ -214,7 +212,8 @@ ros::Publisher Motor_Controller::get_publisher()
 /// @param max_motor_degrees : Maximum motor degrees to set
 void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 {
-    if(max_motor_degrees <0 ){
+    if (max_motor_degrees < 0)
+    {
         ROS_ERROR("Max motor degrees cannot be negative");
         return;
     }

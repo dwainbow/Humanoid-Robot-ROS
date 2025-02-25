@@ -13,7 +13,7 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
 
 void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
 {
-   
+
     auto change_in_position = 500;
     auto controller_value = controller_keys[controller_key];
     auto goal_position = motor->get_present_position();
@@ -50,7 +50,7 @@ void Motor_Cluster::update_motors()
         auto motor = motor_pair.second.first;
         auto controller_key = motor_pair.second.second;
         if (motor->get_subscriber().getNumPublishers() > 0)
-        {   
+        {
             continue;
         }
 

@@ -139,6 +139,12 @@ void Motor_Controller::set_goal_position(int position)
     this->publish_motor_data();
 }
 
+void Motor_Controller::set_goal_position_degrees(int degrees)
+{
+    auto converted_goal_position = (degrees * 4096) / 360;
+    this->set_goal_position(converted_goal_position);
+}
+
 /// @brief Set the torque of the motor
 /// @param torque : Torque value to set
 void Motor_Controller::set_torque(bool torque)
@@ -179,7 +185,6 @@ int Motor_Controller::set_starting_position(int position)
 {
     starting_position = 4096 * position / 360;
     goal_position = starting_position;
-    this->write_goal_position();
     return starting_position;
 }
 
@@ -256,7 +261,7 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
-    this->write_goal_position();
+    this->set_goal_position(starting_position);
 
     // TODO: Uncomment until we have sorted out threading
     // while (std::abs(this->get_present_position() - goal_position) > 10)

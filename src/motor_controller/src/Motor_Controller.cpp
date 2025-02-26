@@ -9,8 +9,8 @@
 Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, int max_degrees, bool reverse_position = false)
 {
     protocol_version = 2.0;
-    port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");         // change to rfcomm0 for bluetooth connetcion
-    packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); // Protocol Version 2.0
+    port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");
+    packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version);
 
     this->motor_id = motor_id;
     this->baude_rate = baude_rate;
@@ -18,7 +18,10 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
 
     publisher = nh.advertise<std_msgs::Int32>("/motor_controller_" + std::to_string(motor_id) + "/goal_position", 1);
     motor_connected = this->connect_motor();
-    if (!motor_connected){return;}
+    if (!motor_connected)
+    {
+        return;
+    }
     operating_mode = 4;
     drive_mode = reverse_position ? 1 : 0;
     this->set_operating_mode(operating_mode);
@@ -53,8 +56,6 @@ bool Motor_Controller::connect_motor()
 
     if (dxl_comm_result == COMM_SUCCESS)
     {
-        ROS_INFO("Motor found! ID: %d, Model Number: %d, Protocol: %.1f, Baud Rate: %d",
-                 motor_id, model_number, protocol_version, baude_rate);
         ROS_INFO("Motor %d connected", motor_id);
         return true;
     }
@@ -78,6 +79,12 @@ int Motor_Controller::get_present_position()
     int32_t position = 0;
 
     int dxl_comm_result = packet_handler->read4ByteTxRx(port_handler, motor_id, 132, (uint32_t *)&position, &dxl_error);
+
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error reading present position of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+        return present_position;
+    }
 
     present_position = position;
     return present_position;
@@ -106,6 +113,12 @@ int Motor_Controller::get_operating_mode()
 
     dxl_comm_result = packet_handler->read1ByteTxRx(port_handler, motor_id, 11, &operating_mode);
 
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error reading operating mode of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+        return -1;
+    }
+
     return static_cast<int>(operating_mode);
 }
 
@@ -122,6 +135,7 @@ void Motor_Controller::set_goal_position(int position)
 {
     goal_position = position;
     goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
+    this->write_goal_position();
     this->publish_motor_data();
 }
 
@@ -137,6 +151,11 @@ void Motor_Controller::set_torque(bool torque)
 /// @param mode : Operating mode to set
 void Motor_Controller::set_operating_mode(int mode)
 {
+    if (mode < 0 || mode > 5)
+    {
+        ROS_ERROR("Operating mode must be between 0 and 4");
+        return;
+    }
     operating_mode = mode;
     this->write_operating_mode();
 }
@@ -145,7 +164,12 @@ void Motor_Controller::set_operating_mode(int mode)
 void Motor_Controller::write_operating_mode()
 {
     uint8_t dxl_error = 0;
-    packet_handler->write1ByteTxRx(port_handler, motor_id, 11, operating_mode, &dxl_error);
+    int dxl_comm_result = packet_handler->write1ByteTxRx(port_handler, motor_id, 11, operating_mode, &dxl_error);
+
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error writing operating mode of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+    }
 }
 
 /// @brief Set the starting position of the motor
@@ -163,33 +187,42 @@ int Motor_Controller::set_starting_position(int position)
 void Motor_Controller::write_torque()
 {
     uint8_t dxl_error = 0;
-    packet_handler->write1ByteTxRx(port_handler, motor_id, 64, torque ? 1 : 0, &dxl_error);
+    int dxl_comm_result = packet_handler->write1ByteTxRx(port_handler, motor_id, 64, torque ? 1 : 0, &dxl_error);
+
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error writing torque of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+    }
 }
 
 /// @brief Write the goal position to the motor
 void Motor_Controller::write_goal_position()
 {
     uint8_t dxl_error = 0;
-    packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
+    int dxl_comm_result = packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
+
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error writing goal position of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+    }
 }
 
 void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
 {
     std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
-    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1,
-                                               [this](const std_msgs::Int32::ConstPtr &msg)
-                                               {
-                                                   this->set_goal_position(msg->data);
-                                                   this->write_goal_position();
-                                               });
+    subscriber = nh.subscribe<std_msgs::Int32>(
+        topic_name, 1,
+        [this](const std_msgs::Int32::ConstPtr &msg)
+        {
+            this->set_goal_position(msg->data);
+            this->write_goal_position();
+        });
 }
 
 void Motor_Controller::publish_motor_data()
 {
-
     if (publisher.getNumSubscribers() == 0)
     {
-        // ROS_WARN("No subscribers for %s, skipping publish", publisher.getTopic().c_str());
         return;
     }
     std_msgs::Int32 msg;
@@ -215,7 +248,6 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
     if (max_motor_degrees < 0)
     {
         ROS_ERROR("Max motor degrees cannot be negative");
-        return;
     }
     auto converted_position = (max_motor_degrees * 4096) / 360;
     this->max_motor_position = starting_position + converted_position;
@@ -239,4 +271,9 @@ void Motor_Controller::set_drive_mode(int drive_mode)
     this->drive_mode = drive_mode;
     uint8_t dxl_error = 0;
     int dxl_comm_result = packet_handler->write1ByteTxRx(port_handler, motor_id, 10, drive_mode, &dxl_error);
+
+    if (dxl_comm_result != COMM_SUCCESS)
+    {
+        ROS_WARN("Error writing drive mode of Motor with ID %d: %s", motor_id, packet_handler->getTxRxResult(dxl_comm_result));
+    }
 }

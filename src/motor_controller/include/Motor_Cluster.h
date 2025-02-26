@@ -4,9 +4,9 @@
 #include <ros/ros.h>
 #include "Motor_Controller.h"
 #include <map>
-#include <memory>  
 #include <string>
 #include <robot_controller/controller_state.h>
+#include <unordered_set>
 
 enum class Body_Part
 {

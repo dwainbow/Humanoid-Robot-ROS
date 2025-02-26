@@ -18,13 +18,8 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(50); // keep this in range of 10-50 Hz
     while (ros::ok())
     {
-        // Call the publish_data method to publish messages
         controller.publish_data();
-
-        // Process any incoming messages (e.g., joystick updates)
         ros::spinOnce();
-
-        // Sleep to maintain the desired loop rate
         loop_rate.sleep();
     }
 

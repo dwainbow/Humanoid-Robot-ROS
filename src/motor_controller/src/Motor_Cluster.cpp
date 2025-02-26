@@ -28,8 +28,6 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     }
 
     motor->set_goal_position(goal_position);
-    motor->publish_motor_data();
-    motor->write_goal_position();
 }
 
 void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
@@ -60,7 +58,7 @@ void Motor_Cluster::update_motors()
 
 void Motor_Cluster::read_controller_data(const robot_controller::controller_state &msg)
 {
-    std::set<std::string> keys_of_interest;
+    std::unordered_set<std::string> keys_of_interest;
 
     switch (body_part)
     {

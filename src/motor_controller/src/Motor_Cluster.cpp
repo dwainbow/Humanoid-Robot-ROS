@@ -30,17 +30,6 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     motor->set_goal_position(goal_position);
 }
 
-void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
-{
-    if (!motor)
-    {
-        ROS_ERROR("add_motor() received a null pointer!");
-        return;
-    }
-
-    motors[motor->get_id()] = std::make_pair(motor, controller_key);
-}
-
 void Motor_Cluster::update_motors()
 {
     for (const auto &motor_pair : motors)
@@ -56,6 +45,16 @@ void Motor_Cluster::update_motors()
     }
 }
 
+void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
+{
+    if (!motor)
+    {
+        ROS_ERROR("add_motor() received a null pointer!");
+        return;
+    }
+
+    motors[motor->get_id()] = std::make_pair(motor, controller_key);
+}
 void Motor_Cluster::read_controller_data(const robot_controller::controller_state &msg)
 {
     std::unordered_set<std::string> keys_of_interest;

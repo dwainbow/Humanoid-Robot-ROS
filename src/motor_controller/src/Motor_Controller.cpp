@@ -30,6 +30,7 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->set_max_motor_degrees(max_degrees);
     this->set_torque(true);
     this->reset_motor();
+    ros::spinOnce();
 }
 
 /// @brief Connect to the motor
@@ -135,8 +136,8 @@ void Motor_Controller::set_goal_position(int position)
 {
     goal_position = position;
     goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
-    this->write_goal_position();
     this->publish_motor_data();
+    this->write_goal_position();
 }
 
 void Motor_Controller::set_goal_position_degrees(int degrees)
@@ -214,26 +215,28 @@ void Motor_Controller::write_goal_position()
 
 void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
 {
-    std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
+    std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position"; 
     subscriber = nh.subscribe<std_msgs::Int32>(
         topic_name, 1,
         [this](const std_msgs::Int32::ConstPtr &msg)
         {
+            // ROS_INFO("Received goal position update: %d", msg->data);
             this->set_goal_position(msg->data);
-            this->write_goal_position();
         });
+    ROS_INFO("Motor %d subcribed to motor %d", motor_id, leader_motor.get_id());
 }
 
 void Motor_Controller::publish_motor_data()
 {
     if (publisher.getNumSubscribers() == 0)
     {
+        // ROS_INFO("No subscribers to publish motor data to");
         return;
     }
     std_msgs::Int32 msg;
     msg.data = this->get_goal_position();
-
     publisher.publish(msg);
+    ros::spinOnce();  
 }
 
 ros::Subscriber Motor_Controller::get_subscriber()
@@ -261,8 +264,8 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
+    
     this->set_goal_position(starting_position);
-
     // TODO: Uncomment until we have sorted out threading
     // while (std::abs(this->get_present_position() - goal_position) > 10)
     // {

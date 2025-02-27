@@ -12,7 +12,7 @@ if [ -d "$PROJECT_PATH/devel" ]; then
     rm -rf "$PROJECT_PATH/devel"
 fi
 
-catkin_make 
+catkin_make -DCMAKE_BUILD_TYPE=Debug
 
 echo "Sourcing the workspace..."
 source $PROJECT_PATH/devel/setup.bash

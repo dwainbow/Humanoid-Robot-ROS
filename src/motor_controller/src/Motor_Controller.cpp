@@ -18,7 +18,10 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
 
     publisher = nh.advertise<std_msgs::Int32>("/motor_controller_" + std::to_string(motor_id) + "/goal_position", 1);
     motor_connected = this->connect_motor();
-    if (!motor_connected){return;}
+    if (!motor_connected)
+    {
+        return;
+    }
     operating_mode = 4;
     drive_mode = reverse_position ? 1 : 0;
     this->set_operating_mode(operating_mode);
@@ -26,11 +29,31 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->starting_position = this->set_starting_position(starting_position);
     this->set_max_motor_degrees(max_degrees);
     this->set_torque(true);
+    this->add_offset();
     this->reset_motor();
+    ros::spinOnce();
 }
 
 /// @brief Connect to the motor
 /// @return true if motor is connected, false otherwise
+
+void Motor_Controller::add_offset()
+{
+    auto present_position = this->get_present_position();
+    ROS_INFO("Present position: %d", present_position);
+    auto threshold = 100;
+    if (present_position >= starting_position - threshold && present_position <= max_motor_position + threshold)
+    {
+
+        return;
+    }
+    else if (present_position < starting_position)
+    {
+        return;
+    }
+    starting_position += 4096;
+    max_motor_position += 4096;
+}
 bool Motor_Controller::connect_motor()
 {
     if (!port_handler->openPort())

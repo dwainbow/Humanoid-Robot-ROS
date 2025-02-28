@@ -264,7 +264,10 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
-    
+    // if(this->get_present_position() > max_motor_position){
+    //     this->set_goal_position(0);
+    // }
+
     this->set_goal_position(starting_position);
     // TODO: Uncomment until we have sorted out threading
     // while (std::abs(this->get_present_position() - goal_position) > 10)

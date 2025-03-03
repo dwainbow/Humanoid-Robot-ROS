@@ -44,7 +44,6 @@ void Motor_Controller::add_offset()
     auto threshold = 100;
     if (present_position >= starting_position - threshold && present_position <= max_motor_position + threshold)
     {
-
         return;
     }
     else if (present_position < starting_position)
@@ -234,7 +233,7 @@ void Motor_Controller::write_goal_position()
 
 void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
 {
-    std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position"; 
+    std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
     subscriber = nh.subscribe<std_msgs::Int32>(
         topic_name, 1,
         [this](const std_msgs::Int32::ConstPtr &msg)
@@ -255,7 +254,7 @@ void Motor_Controller::publish_motor_data()
     std_msgs::Int32 msg;
     msg.data = this->get_goal_position();
     publisher.publish(msg);
-    ros::spinOnce();  
+    ros::spinOnce();
 }
 
 ros::Subscriber Motor_Controller::get_subscriber()

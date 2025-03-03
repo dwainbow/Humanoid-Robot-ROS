@@ -55,6 +55,9 @@ private:
     ros::NodeHandle nh;
 
     int set_starting_position(int position);
+
+    void add_offset();
+
     bool connect_motor();
 
     void reset_motor();

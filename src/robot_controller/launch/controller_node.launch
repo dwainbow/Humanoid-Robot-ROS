@@ -3,7 +3,7 @@
 
    <!-- WARNING the value might have to change to js0 depending on the order of bluetooth connections-->
   <node name="joy_node" pkg="joy" type="joy_node" output="screen">
-    <param name="dev" value="/dev/input/js1" />
+    <param name="dev" value="/dev/input/js0" />
   </node>
 
   <!-- Launch the controller listener -->

@@ -1,1 +1,1 @@
-gdb --args /home/ekow/Humanoid-Robot-ROS/devel/lib/motor_controller/motor_node
+gdb --args ~/Humanoid-Robot-ROS/devel/lib/motor_controller/motor_node

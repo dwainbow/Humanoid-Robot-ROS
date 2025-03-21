@@ -11,7 +11,7 @@ Motor_Cluster::Motor_Cluster(ros::NodeHandle &nh, Body_Part body_part)
         });
 }
 
-void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
+virtual void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
 {
 
     auto change_in_position = 500;
@@ -40,7 +40,7 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     // exit(0);
 }
 
-void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
+virtual void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key)
 {
     if (!motor)
     {
@@ -51,7 +51,7 @@ void Motor_Cluster::add_motor(std::shared_ptr<Motor_Controller> motor, const std
     motors[motor->get_id()] = std::make_pair(motor, controller_key);
 }
 
-void Motor_Cluster::update_motors()
+virtual void Motor_Cluster::update_motors()
 {
     for (const auto &motor_pair : motors)
     {

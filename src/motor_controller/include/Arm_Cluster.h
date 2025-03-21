@@ -17,18 +17,16 @@ class Arm_Cluster : public Motor_Cluster
         void add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key);
         void update_motors();
 
+
     private:
         ros::Subscriber subscriber;
         Body_Part body_part;
         std::map<int, std::pair<std::shared_ptr<Motor_Controller>, std::string>> motors;
         std::map<std::string, float> controller_keys;
 
-        double get_elbow_X();
-        double get_elbow_Y();
-        double get_elbow_Z();
-        double get_hand_X();
-        double get_hand_Y();
-        double get_hand_Z();
+        std::vector<double> get_elbow_Position();
+        std::vector<double> get_hand_Position();
+        Motor_Controller find_motor(const std::string &motor_name)
         void read_controller_data(const robot_controller::controller_state &msg);
 };
 #endif // MOTOR_CLUSTER_H

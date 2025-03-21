@@ -55,7 +55,7 @@ Motor_Cluster build_right_leg_cluster(ros::NodeHandle nh)
 
     // Use `std::shared_ptr` to store motors dynamically
     // std::shared_ptr<Motor_Controller> upper_knee_motor_1 = std::make_shared<Motor_Controller>(nh, 1, bd_rate, 0, 90, true);
-    std::shared_ptr<Motor_Controller> upper_knee_motor_2 = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 90, false);
+    //std::shared_ptr<Motor_Controller> upper_knee_motor_2 = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 90, false);
 
 
     // std::shared_ptr<Motor_Controller> lower_knee_motor_3 = std::make_shared<Motor_Controller>(nh, 3, bd_rate, 0, 45, false);
@@ -63,7 +63,7 @@ Motor_Cluster build_right_leg_cluster(ros::NodeHandle nh)
 
     // Add motors to cluster
     // right_leg_cluster.add_motor(upper_knee_motor_1, "Right_Stick_Y");
-    right_leg_cluster.add_motor(upper_knee_motor_x, "Right_Stick_Y");
+    //right_leg_cluster.add_motor(upper_knee_motor_x, "Right_Stick_Y");
     // right_leg_cluster.add_motor(lower_knee_motor_3, "Right_Stick_X");
     // right_leg_cluster.add_motor(lower_knee_motor_8, "Right_Stick_X");
 
@@ -77,8 +77,8 @@ Motor_Cluster build_right_arm_cluster(ros::NodeHandle nh)
     auto bd_rate = 3000000;
 
     // Use `std::shared_ptr` to store motors dynamically
-    std::shared_ptr<Motor_Controller> arm_elbow_x = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 45, false);
-    std::shared_ptr<Motor_Controller> arm_elbow_x = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 45, false);
+    //std::shared_ptr<Motor_Controller> arm_elbow_x = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 45, false);
+    //std::shared_ptr<Motor_Controller> arm_elbow_x = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 45, false);
     // std::shared_ptr<Motor_Controller> knee_motor_3 = std::make_shared<Motor_Controller>(nh, x, bd_rate, 0, 120, false);
 
     // arm_elbow_14->sync_motor_with(nh, *arm_elbow_15);
@@ -86,8 +86,8 @@ Motor_Cluster build_right_arm_cluster(ros::NodeHandle nh)
 
     // Add motors to cluster
     // right_leg_cluster.add_motor(knee_motor_1, "Right_Stick_Y");
-    right_arm_cluster.add_motor(arm_elbow_x, "Right_Stick_Y");
-    right_arm_cluster.add_motor(arm_elbow_x, "Right_Stick_Y");
+    //right_arm_cluster.add_motor(arm_elbow_x, "Right_Stick_Y");
+    //right_arm_cluster.add_motor(arm_elbow_x, "Right_Stick_Y");
 
     return right_arm_cluster;
 }

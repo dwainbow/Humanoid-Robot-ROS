@@ -42,27 +42,36 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
 void Motor_Controller::add_offset()
 {
     ROS_INFO("----------------------------------------------------------------------");
+    auto present_position = this->get_present_position();
+    
     ROS_INFO("Present position before offset %d", present_position);
     ROS_INFO("Starting Positon before offset %d", starting_position);
     ROS_INFO("max motor Positon before offset%d", max_motor_position);
+    
+    auto converted_position = present_position;
+    if (present_position < 0){
+        converted_position = std::abs(present_position);
+    }
+    auto diff_1 = converted_position - starting_position;
+    auto diff_2 = 4096 - converted_position;
 
-    auto present_position = this->get_present_position();
-
-    // if (present_position < starting_position){
-    //     return;
-    // }
-    auto diff_1 = present_position - starting_position;
-    auto diff_2 = 4096 - present_position;
-
+    
     ROS_INFO("DIFF 1 %d", diff_1);
     ROS_INFO("DIFF 2 %d", diff_2);
 
     auto offset = 0;
 
     if (diff_2 < diff_1){
-    ROS_INFO("Applying offset");
-        offset = 4096;
+        ROS_INFO("Applying offset");
+        if (present_position < 0){
+            offset -= 4096;
+        }
+        else{
+            offset +=4096;
+        }
     }
+    
+
 
     starting_position += offset;
     max_motor_position += offset;
@@ -77,7 +86,7 @@ void Motor_Controller::add_offset()
     // starting_position += 4069;
     // max_motor_position += 4069;
 
-    ROS_INFO("Present position after offset %d", present_position);
+    ROS_INFO("Present position after offset %d", this->get_present_position());
     ROS_INFO("Starting Positon after offset %d", starting_position);
     ROS_INFO("max motor Positon after offset%d", max_motor_position);
     ROS_INFO("----------------------------------------------------------------------");
@@ -293,10 +302,10 @@ void Motor_Controller::reset_motor()
     ROS_INFO("----------------------------------------------------------------------");
     // exit(0);
 
-    while (std::abs(this->get_present_position() - goal_position) > 10)
-    {
-        ros::Duration(0.1).sleep();
-    }
+    // while (std::abs(this->get_present_position() - goal_position) > 10)
+    // {
+    //     ros::Duration(0.1).sleep();
+    // }
     // TODO: Uncomment until we have sorted out threading
 }
 

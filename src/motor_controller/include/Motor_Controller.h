@@ -54,6 +54,7 @@ private:
     ros::NodeHandle nh;
 
     int set_starting_position(int position);
+    int process_publisher_data(int position);
 
     void add_offset();
 

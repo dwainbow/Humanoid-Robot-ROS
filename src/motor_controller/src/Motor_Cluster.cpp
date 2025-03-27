@@ -17,11 +17,7 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     auto change_in_position = 500;
     auto controller_value = controller_keys[controller_key];
     auto goal_position = motor->get_present_position();
-    if(motor->get_id() ==11){
-        ROS_INFO("GOAL POSITION %d", goal_position);
-        ROS_INFO("Controller value %f", controller_value);
-        ROS_INFO("-----------------------------------------------");
-    }
+    
     if (controller_value > 0)
     {
         goal_position += change_in_position;
@@ -30,11 +26,7 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     {
         goal_position -= change_in_position;
     }
-    if(motor->get_id() ==11){
-        ROS_INFO("GOAL POSITION %d", goal_position);
-        ROS_INFO("Controller value %f", controller_value);
-        ROS_INFO("-----------------------------------------------");
-    }
+   
     motor->set_goal_position(goal_position);
     motor->write_goal_position();
     // exit(0);
@@ -57,6 +49,7 @@ void Motor_Cluster::update_motors()
     {
         auto motor = motor_pair.second.first;
         auto controller_key = motor_pair.second.second;
+        motor->publish_motor_data();
         if (motor->get_subscriber().getNumPublishers() > 0)
         {
             // ROS_INFO("Not updating motor %d", motor->get_id());

@@ -16,7 +16,7 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->baude_rate = baude_rate;
     this->reverse_position = reverse_position;
 
-    publisher = nh.advertise<std_msgs::Int32>("/motor_controller_" + std::to_string(motor_id) + "/goal_position", 1);
+    publisher = nh.advertise<std_msgs::Int32>("/motor_controller_" + std::to_string(motor_id) + "/goal_position", 1000);
     motor_connected = this->connect_motor();
     if (!motor_connected)
     {
@@ -30,39 +30,46 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->set_max_motor_degrees(max_degrees);
     this->set_torque(true);
     this->add_offset();
-    this->reset_motor();
-    this->publish_motor_data();
-    // ROS_INFO("Published data for motor %d on startup", this->motor_id);
- 
+    // this->reset_motor(); 
 }
 
 /// @brief Connect to the motor
 /// @return true if motor is connected, false otherwise
 
+
 void Motor_Controller::add_offset()
 {
     ROS_INFO("----------------------------------------------------------------------");
+    auto present_position = this->get_present_position();
+    
     ROS_INFO("Present position before offset %d", present_position);
     ROS_INFO("Starting Positon before offset %d", starting_position);
     ROS_INFO("max motor Positon before offset%d", max_motor_position);
+    
+    auto converted_position = present_position;
+    if (present_position < 0){
+        converted_position = std::abs(present_position);
+    }
+    auto diff_1 = converted_position - starting_position;
+    auto diff_2 = 4096 - converted_position;
 
-    auto present_position = this->get_present_position();
-
-    // if (present_position < starting_position){
-    //     return;
-    // }
-    auto diff_1 = present_position - starting_position;
-    auto diff_2 = 4096 - present_position;
-
+    
     ROS_INFO("DIFF 1 %d", diff_1);
     ROS_INFO("DIFF 2 %d", diff_2);
 
     auto offset = 0;
 
     if (diff_2 < diff_1){
-    ROS_INFO("Applying offset");
-        offset = 4096;
+        ROS_INFO("Applying offset");
+        if (present_position < 0){
+            offset -= 4096;
+        }
+        else{
+            offset +=4096;
+        }
     }
+    
+
 
     starting_position += offset;
     max_motor_position += offset;
@@ -77,7 +84,7 @@ void Motor_Controller::add_offset()
     // starting_position += 4069;
     // max_motor_position += 4069;
 
-    ROS_INFO("Present position after offset %d", present_position);
+    ROS_INFO("Present position after offset %d", this->get_present_position());
     ROS_INFO("Starting Positon after offset %d", starting_position);
     ROS_INFO("max motor Positon after offset%d", max_motor_position);
     ROS_INFO("----------------------------------------------------------------------");
@@ -170,10 +177,26 @@ bool Motor_Controller::get_reverse()
 /// @brief Set the goal position of the motor
 /// @param position : Goal position to set
 void Motor_Controller::set_goal_position(int position)
-{
+{   
+    bool printing = false ;
+    if (motor_id == 14){
+        printing = true; 
+    }
+
+    if (printing){
+        ROS_INFO("Starting Position : %d", starting_position);
+        ROS_INFO("Proposed Goal position: %d", position);
+        ROS_INFO("Max Motor Position Before: %d", max_motor_position);
+
+        ROS_INFO("Goal Position Before: %d", goal_position);
+    }
     goal_position = position;
     goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
-    this->publish_motor_data();
+
+    if (printing){
+        ROS_INFO("Goal Position After: %d", goal_position);
+        ROS_INFO("----------------------------------------------------------------------");
+    }
 }
 
 /// @brief Set the torque of the motor
@@ -220,22 +243,36 @@ void Motor_Controller::write_torque()
 /// @brief Write the goal position to the motor
 void Motor_Controller::write_goal_position()
 {
-    if (motor_id ==11 ){
-        
-    // ROS_INFO("Present position: %d", this->get_present_position());
-    //  ROS_INFO("Goal position: %d", goal_position);
-    }
     uint8_t dxl_error = 0;
     packet_handler->write4ByteTxRx(port_handler, motor_id, 116, goal_position, &dxl_error);
+}
+
+int Motor_Controller::process_publisher_data(int position){
+    //This the input is the position data of the new motor. 
+    //There is a possibility that data cannot be within the range of the other motor so it will not update 
+    //Determine logic whether or not to apply an offset
+
+    //If position is out of range then we add an offset
+    //Note this only works for positive, we need to add negative logic too 
+    // ROS_INFO("Position data before: %d", position);
+    if(!(starting_position <= position && position <= max_motor_position)){
+        position+=4096;
+    }
+    // ROS_INFO("Position data after: %d", position);
+    return position;
 }
 
 void Motor_Controller::sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor)
 {
     std::string topic_name = "/motor_controller_" + std::to_string(leader_motor.get_id()) + "/goal_position";
-    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1,
+    subscriber = nh.subscribe<std_msgs::Int32>(topic_name, 1000,
                                                [this](const std_msgs::Int32::ConstPtr &msg)
                                                {
-                                                   this->set_goal_position(msg->data);
+
+                                                   int position_data =  this->process_publisher_data(msg->data);
+                                                   this->set_goal_position(position_data);
+                                                //    ROS_INFO("Present Position after sync: %d", this->get_present_position());
+                        
                                                    this->write_goal_position();
                                                });
 }
@@ -248,12 +285,9 @@ void Motor_Controller::publish_motor_data()
     //     // ROS_WARN("No subscribers for %s, skipping publish", publisher.getTopic().c_str());
     //     return;
     // }
-    // ROS_INFO("Pubishing data");
     std_msgs::Int32 msg;
-    msg.data = this->get_goal_position();
-
+    msg.data = this->get_present_position();
     publisher.publish(msg);
-    // ROS_INFO("Published data on startup");
 }
 
 ros::Subscriber Motor_Controller::get_subscriber()
@@ -282,7 +316,6 @@ void Motor_Controller::set_max_motor_degrees(int max_motor_degrees)
 /// @brief Reset the motor
 void Motor_Controller::reset_motor()
 {
-    ROS_INFO("----------------------------------------------------------------------");
     goal_position = starting_position;
     ROS_INFO("Moving to starting position %d", starting_position);
     ROS_INFO("Goal Position %d", goal_position);
@@ -293,10 +326,10 @@ void Motor_Controller::reset_motor()
     ROS_INFO("----------------------------------------------------------------------");
     // exit(0);
 
-    while (std::abs(this->get_present_position() - goal_position) > 10)
-    {
-        ros::Duration(0.1).sleep();
-    }
+    // while (std::abs(this->get_present_position() - goal_position) > 10)
+    // {
+    //     ros::Duration(0.1).sleep();
+    // }
     // TODO: Uncomment until we have sorted out threading
 }
 

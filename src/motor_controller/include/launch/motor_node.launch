@@ -1,4 +1,9 @@
 <launch>
   <!-- Launch the motor listener -->
   <node name="motor_node" pkg="motor_controller" type="motor_node" output="screen" />
+  <!-- <node name="left_leg_cluster_node" pkg="motor_controller" type="motor_node" output="screen" />
+  <node name="left_arm_cluster_node" pkg="motor_controller" type="motor_node" output="screen" />
+  <node name="right_leg_cluster_node" pkg="motor_controller" type="motor_node" output="screen" />
+  <node name="right_arm_cluster_node" pkg="motor_controller" type="motor_node" output="screen" /> -->
+
 </launch>

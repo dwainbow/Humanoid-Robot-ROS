@@ -213,12 +213,55 @@ include_directories(
 )
 
 
-add_executable(motor_node src/motor_node.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
+add_executable(motor_node 
+src/motor_node.cpp
+src/Motor_Controller.cpp
+src/Motor_Cluster.cpp
+)
+
+add_executable(left_leg_cluster_node 
+src/Motor_Controller.cpp
+src/Motor_Cluster.cpp
+src/clusters/left_leg_cluster.cpp
+)
+
+add_executable(left_arm_cluster_node 
+src/Motor_Controller.cpp
+src/Motor_Cluster.cpp
+src/clusters/left_arm_cluster.cpp
+)
+
+add_executable(right_leg_cluster_node 
+src/Motor_Controller.cpp
+src/Motor_Cluster.cpp
+src/clusters/right_leg_cluster.cpp
+)
+
+add_executable(right_arm_cluster_node 
+src/Motor_Controller.cpp
+src/Motor_Cluster.cpp
+src/clusters/right_arm_cluster.cpp
+)
+
+
 
 
 ## Link against dependencies
 target_link_libraries(motor_node ${catkin_LIBRARIES})
 add_dependencies(motor_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(left_leg_cluster_node ${catkin_LIBRARIES})
+add_dependencies(left_leg_cluster_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(left_arm_cluster_node ${catkin_LIBRARIES})
+add_dependencies(left_arm_cluster_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(right_leg_cluster_node ${catkin_LIBRARIES})
+add_dependencies(right_leg_cluster_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(right_arm_cluster_node ${catkin_LIBRARIES})
+add_dependencies(right_arm_cluster_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 add_executable(scan_motors src/scan_motors.cpp )
 target_link_libraries(scan_motors ${catkin_LIBRARIES})

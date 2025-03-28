@@ -248,10 +248,6 @@ void Motor_Controller::write_goal_position()
 }
 
 int Motor_Controller::process_publisher_data(int position){
-    //This the input is the position data of the new motor. 
-    //There is a possibility that data cannot be within the range of the other motor so it will not update 
-    //Determine logic whether or not to apply an offset
-
     //If position is out of range then we add an offset
     //Note this only works for positive, we need to add negative logic too 
     // ROS_INFO("Position data before: %d", position);
@@ -286,7 +282,7 @@ void Motor_Controller::publish_motor_data()
     //     return;
     // }
     std_msgs::Int32 msg;
-    msg.data = this->get_present_position();
+    msg.data = goal_position;
     publisher.publish(msg);
 }
 

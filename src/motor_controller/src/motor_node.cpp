@@ -56,7 +56,7 @@ Motor_Cluster build_leg_cluster_test(ros::NodeHandle nh)
     std::shared_ptr<Motor_Controller> motor_2 = std::make_shared<Motor_Controller>(nh, 2, bd_rate, 0, 90, true);
     std::shared_ptr<Motor_Controller> motor_14= std::make_shared<Motor_Controller>(nh, 14, bd_rate, 0, 90, false);
 
-    motor_14->sync_motor_with(nh, *motor_2);
+    // motor_14->sync_motor_with(nh, *motor_2);
     test.add_motor(motor_2, "Left_Stick_Y");
     test.add_motor(motor_14, "Left_Stick_Y");
 
@@ -70,6 +70,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     Motor_Cluster test = build_leg_cluster_test(nh);
+
+    ros::AsyncSpinner spinner(2);
     ros::Rate loop_rate(100);
     while (ros::ok())
     {

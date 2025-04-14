@@ -30,7 +30,7 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     this->set_max_motor_degrees(max_degrees);
     this->set_torque(true);
     this->add_offset();
-    this->reset_motor();
+    // this->reset_motor();
     this->publish_motor_data();
     // ROS_INFO("Published data for motor %d on startup", this->motor_id);
  

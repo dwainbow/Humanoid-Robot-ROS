@@ -77,7 +77,7 @@ void Motor_Cluster::read_controller_data(const robot_controller::controller_stat
         keys_of_interest = {"L2", "Left_Stick_Y", "Left_Stick_X"};
         break;
     case Body_Part::RIGHT_ARM:
-        keys_of_interest = {"R2", "Right_Stick_Y", "Right_Stick_X"};
+        keys_of_interest = {"Right_Stick_Y", "Right_Stick_X", "Left_Stick_X", "Left_Stick_Y"};
         break;
     case Body_Part::LEFT_LEG:
         keys_of_interest = {"Left_Stick_X", "Left_Stick_Y"};

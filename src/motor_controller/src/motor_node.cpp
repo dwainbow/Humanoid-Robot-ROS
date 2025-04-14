@@ -14,9 +14,9 @@ Motor_Cluster build_right_arm_cluster(ros::NodeHandle nh)
     std::shared_ptr<Motor_Controller> upper_shoulder_motor = std::make_shared<Motor_Controller>(nh, 4, bd_rate, 0, 45, false);
 
     right_arm_cluster.add_motor(elbow_motor, "Right_Stick_X");
-    right_arm_cluster.add_motor(upper_arm_motor, "Right_Stick_X");
-    right_arm_cluster.add_motor(lower_shoulder_motor, "Right_Stick_Y");
-    right_arm_cluster.add_motor(upper_shoulder_motor, "Right_Stick_Y");
+    right_arm_cluster.add_motor(upper_arm_motor, "Right_Stick_Y");
+    right_arm_cluster.add_motor(lower_shoulder_motor, "Left_Stick_Y");
+    right_arm_cluster.add_motor(upper_shoulder_motor, "Left_Stick_X");
 
     return right_arm_cluster;
 }
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
     while (ros::ok())
     {
-        left_arm_cluster.update_motors();
+        // left_arm_cluster.update_motors();
         right_arm_cluster.update_motors();
         ros::spinOnce();
     }

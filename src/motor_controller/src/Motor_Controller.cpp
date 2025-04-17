@@ -26,19 +26,24 @@ Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_
     drive_mode = reverse_position ? 1 : 0;
     this->set_operating_mode(operating_mode);
     this->set_drive_mode(drive_mode);
+    this->set_velocity_profile();
     this->starting_position = this->set_starting_position(starting_position);
     this->set_max_motor_degrees(max_degrees);
     this->set_torque(true);
-    this->add_offset();
+    // this->add_offset();
     // this->reset_motor();
-    this->publish_motor_data();
+    // this->publish_motor_data();
     // ROS_INFO("Published data for motor %d on startup", this->motor_id);
  
 }
 
 /// @brief Connect to the motor
 /// @return true if motor is connected, false otherwise
-
+void Motor_Controller:: set_velocity_profile(){
+    uint32_t velocity = 240;
+    uint8_t dxl_error = 0;
+    packet_handler->write4ByteTxRx(port_handler, motor_id, 100, velocity, &dxl_error);
+}
 void Motor_Controller::add_offset()
 {
     ROS_INFO("----------------------------------------------------------------------");
@@ -166,13 +171,20 @@ bool Motor_Controller::get_reverse()
 {
     return reverse_position;
 }
+/// @brief goal position is in degrees 
+/// @param goal_position 
+void Motor_Controller :: set_motor_position(int goal_position){
 
+    goal_position = starting_position+ (goal_position * 4096) / 360 ;
+    this->set_goal_position(goal_position);
+    this->write_goal_position();
+}
 /// @brief Set the goal position of the motor
 /// @param position : Goal position to set
 void Motor_Controller::set_goal_position(int position)
 {
     goal_position = position;
-    goal_position = boost::algorithm::clamp(goal_position, starting_position, max_motor_position);
+    goal_position = boost::algorithm::clamp(goal_position, starting_position-1024, max_motor_position);
     this->publish_motor_data();
 }
 
@@ -204,7 +216,7 @@ void Motor_Controller::write_operating_mode()
 /// @return starting_position
 int Motor_Controller::set_starting_position(int position)
 {
-    starting_position = 4096 * position / 360;
+    starting_position = this->get_present_position() + (4096 * position / 360);
     // goal_position = starting_position;
     // this->write_goal_position();
     return starting_position;

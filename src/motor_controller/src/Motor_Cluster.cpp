@@ -30,11 +30,6 @@ void Motor_Cluster::update_motor(std::shared_ptr<Motor_Controller> motor, const 
     {
         goal_position -= change_in_position;
     }
-    if(motor->get_id() ==11){
-        ROS_INFO("GOAL POSITION %d", goal_position);
-        ROS_INFO("Controller value %f", controller_value);
-        ROS_INFO("-----------------------------------------------");
-    }
     motor->set_goal_position(goal_position);
     motor->write_goal_position();
     // exit(0);

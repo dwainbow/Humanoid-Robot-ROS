@@ -23,6 +23,7 @@ public:
     void update_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key);
     void add_motor(std::shared_ptr<Motor_Controller> motor, const std::string &controller_key);
     void update_motors();
+   
 
 private:
     ros::Subscriber subscriber;

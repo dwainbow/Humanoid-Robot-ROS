@@ -71,6 +71,22 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "*.ipp": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "forward_list": "cpp",
+        "filesystem": "cpp",
+        "regex": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "future": "cpp",
+        "scoped_allocator": "cpp",
+        "valarray": "cpp",
+        "charconv": "cpp",
+        "netfwd": "cpp"
     }
 }

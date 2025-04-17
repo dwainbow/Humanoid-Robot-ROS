@@ -224,11 +224,17 @@ add_executable(scan_motors src/scan_motors.cpp )
 target_link_libraries(scan_motors ${catkin_LIBRARIES})
 
 
-add_executable(motor_test src/test_motor.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
+# add_executable(motor_test src/test_motor.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
 
+
+# ## Link against dependencies
+# target_link_libraries(motor_test ${catkin_LIBRARIES})
+# add_dependencies(motor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(uva_test src/uva_test.cpp src/Motor_Controller.cpp src/Motor_Cluster.cpp)
 
 ## Link against dependencies
-target_link_libraries(motor_test ${catkin_LIBRARIES})
-add_dependencies(motor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(uva_test ${catkin_LIBRARIES})
+add_dependencies(uva_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 

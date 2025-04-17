@@ -27,6 +27,8 @@ public:
     void set_goal_position(int position);
     void sync_motor_with(ros::NodeHandle &nh, Motor_Controller &leader_motor);
     void write_goal_position();
+    void set_motor_position(int goal_position);
+    void set_velocity_profile();
 
     ros::Publisher get_publisher();
     ros::Subscriber get_subscriber();

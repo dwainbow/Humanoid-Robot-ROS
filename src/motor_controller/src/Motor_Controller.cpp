@@ -6,10 +6,12 @@
 /// @param baude_rate : Baud Rate of the motor
 /// @param starting_position : Starting position of the motor (deg)
 /// @param reverse_position : Reverse the position of the motor
-Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, int max_degrees, bool reverse_position = false)
+Motor_Controller::Motor_Controller(ros::NodeHandle &nh, int motor_id, int baude_rate, int starting_position, int max_degrees, const char* port_string, bool reverse_position = false)
 {
     protocol_version = 2.0;
-    port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");         // change to rfcomm0 for bluetooth connetcion
+    // port_handler = dynamixel::PortHandler::getPortHandler("/dev/ttyUSB0");         // change to rfcomm0 for bluetooth connetcion
+    port_handler = dynamixel::PortHandler::getPortHandler(port_string);         // change to rfcomm0 for bluetooth connetcion
+
     packet_handler = dynamixel::PacketHandler::getPacketHandler(protocol_version); // Protocol Version 2.0
 
     this->motor_id = motor_id;

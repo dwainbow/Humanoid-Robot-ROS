@@ -3,8 +3,15 @@
 
 void scan_motors()
 {
-    const char *port_name = "/dev/ttyUSB0"; // Replace with your actual port
-    int baud_rates[] = {57600, 3000000};
+    char *port_name = "/dev/ttyUSB0"; // Replace with your actual port
+    for (int i = 0; i<2; i++){
+        if (i == 0){
+            port_name = "/dev/ttyUSB0";
+        }
+        else{
+            port_name = "/dev/ttyUSB1";
+        }
+        int baud_rates[] = {57600, 3000000};
     const int num_baud_rates = sizeof(baud_rates) / sizeof(baud_rates[0]);
 
     // Protocol versions to test
@@ -59,6 +66,8 @@ void scan_motors()
 
         portHandler->closePort();
     }
+    }
+    
 }
 
 int main(int argc, char **argv)

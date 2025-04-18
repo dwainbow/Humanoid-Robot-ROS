@@ -1,0 +1,7 @@
+<launch>
+  <!-- Launch the motor listener -->
+    <node name="uva_test_left" pkg="motor_controller" type="uva_test_left" output="screen" />
+    <node name="uva_test_right" pkg="motor_controller" type="uva_test_right" output="screen" />
+
+
+</launch>

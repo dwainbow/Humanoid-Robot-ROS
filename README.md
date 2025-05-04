@@ -87,4 +87,8 @@ In a seperate terminal, launch the motor node that reads information from the co
 Now you should be able to control the motors via controller
 
 
+## UVA Demo!
+https://github.com/user-attachments/assets/384f8a9e-69e2-4cf2-bfaa-dbfe51a593dd
+
+
 
